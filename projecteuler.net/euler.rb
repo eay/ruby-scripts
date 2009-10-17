@@ -502,13 +502,34 @@ def problem_18(pyramid = %w{
 end
 
 def problem_19
-end
+  mdays = lambda do |y,m|
+    d = [31,28,31, 30,31,30, 31,31,30, 31,30,31][m-1]
+    d += 1 if (m == 2) && (y % 4).zero? && (!(y % 100).zero? || (y % 400).zero?)
+    d
+  end
 
+  num = 0
+  total = 1
+  (1900..2000).each do |year|
+    (1..12).each do |month|
+      total += mdays.call(year,month)
+      num += 1 if (total % 7).zero? && year >= 1901
+    end
+  end
+  num
+end
+  
+# Find the sum of digits in 100! 26915    
 def problem_20(fac = 100)
   1.upto(fac).reduce {|a,v| a * v }.to_s.each_char.map(&:to_i).reduce(&:+)
 end
 
+# Evaluate the sum of all amicable pairs under 10000.
+def problem_21(num = 9_999)
+  Primes.divisors(24)
+end
+
 if __FILE__ == $0
-  p problem_20
+  p problem_19
 end
 

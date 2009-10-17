@@ -1,4 +1,3 @@
-# Return all 
 class Primes
   include Enumerable
 
@@ -67,6 +66,37 @@ class Primes
     # If we get to here there is a factor left that is > sqrt(num), so
     # it's matching element must be less
     fac << num
+  end
+
+  # Return all the divisors for the number
+  def self.divisors(num)
+    fac = self.factors(num)
+    nfac = fac.reduce(Hash.new(0)) {|h,v| h[v] += 1; h }
+    # For each
+    fac.length.times
+    p fac
+    p nfac
+  end
+
+  # Return arrays made of n of a's elements
+  def self.div_combinations(a,n = a.length)
+    puts "Enter #{n}"
+    p a
+    ret = []
+    if n == 1
+      ret = a.dup.indexmap do |v|
+      end 
+    else
+      a.length.times do |i|
+        b = a.dup
+        b[i,1] = nil # delete entry
+        
+        r = div_combinations(b,n-1)
+        puts "r => #{r.inspect}"
+        ret << r
+      end
+    end
+    ret
   end
 
   private
