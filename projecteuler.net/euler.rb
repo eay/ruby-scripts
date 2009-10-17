@@ -529,7 +529,15 @@ def problem_21(num = 9_999)
   Primes.divisors(24)
 end
 
+def problem_22
+  names = open("names.txt").read.gsub('"','').split(/,/).sort
+  numbers = names.map {|v| v.each_byte.reduce(&:+) - v.length*?@}
+  total = 0
+  numbers.each_index {|i| total += numbers[i] * (i+1)}
+  total
+end
+
 if __FILE__ == $0
-  p problem_19
+  p problem_22
 end
 
