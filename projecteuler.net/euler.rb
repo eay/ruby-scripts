@@ -502,8 +502,13 @@ def problem_18(pyramid = %w{
 end
 
 def problem_19
-  problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
-puts problem_19
+def problem_20(fac = 100)
+  1.upto(fac).reduce {|a,v| a * v }.to_s.each_char.map(&:to_i).reduce(&:+)
+end
+
+if __FILE__ == $0
+  p problem_20
+end
 
