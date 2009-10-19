@@ -68,9 +68,19 @@ class Primes
     fac << num
   end
 
+  private
+  def check_sieve_size(num)
+    if @max <= Math.sqrt(num).to_i
+      # puts "sieve is not large enough, regenerating"
+      initialize(num)
+    end
+  end
+end
+
+class Integer
   # Return all the divisors for the number
-  def self.divisors(num)
-    fac = self.factors(num)
+  def divisors
+    fac = Primes.factors(self)
     div = {1 => true}
     (1..fac.length).each do |n|
       fac.combination(n) do |a|
@@ -80,12 +90,8 @@ class Primes
     div.keys.sort
   end
 
-  private
-  def check_sieve_size(num)
-    if @max <= Math.sqrt(num).to_i
-      # puts "sieve is not large enough, regenerating"
-      initialize(num)
-    end
+  def sum_of_divisors
+    divisors.reduce(-self,&:+)
   end
 end
 
