@@ -422,6 +422,8 @@ def problem_16(power = 1000)
   (2 ** power).to_s.each_char.map(&:to_i).reduce(&:+)
 end
 
+# How many letters would be needed to write all the numbers in
+# words from 1 to 1000?
 def problem_17(max = 1000)
   words = {
     0 => "",
@@ -470,6 +472,7 @@ def problem_17(max = 1000)
   end
 end
 
+# Find the maximum sum travelling from the top of the triangle to the base.
 def problem_18(pyramid = %w{
     75
     95 64
@@ -501,6 +504,7 @@ def problem_18(pyramid = %w{
   end.first
 end
 
+# How many Sundays fell on the first of the month during the twentieth century?
 def problem_19
   mdays = lambda do |y,m|
     d = [31,28,31, 30,31,30, 31,31,30, 31,30,31][m-1]
@@ -526,9 +530,20 @@ end
 
 # Evaluate the sum of all amicable pairs under 10000.
 def problem_21(num = 9_999)
-  Primes.divisors(24)
+  sum_of_div = lambda {|n| Primes.divisors(n).reduce(-n,&:+) }
+  sum = 0
+  (2..num).each do |n|
+    # Generate the sum of the proper divisors of n
+    sod = sum_of_div.call(n)
+    next if n >= sod
+    if n == sum_of_div.call(sod)
+      sum += n + sod # The other will be picked up later
+    end
+  end
+  sum
 end
 
+# What is the total of all the name scores in the file of first names?
 def problem_22
   names = open("names.txt").read.gsub('"','').split(/,/).sort
   numbers = names.map {|v| v.each_byte.reduce(&:+) - v.length*?@}
@@ -538,6 +553,6 @@ def problem_22
 end
 
 if __FILE__ == $0
-  p problem_22
+  p problem_21
 end
 
