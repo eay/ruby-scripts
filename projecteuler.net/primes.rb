@@ -9,11 +9,11 @@ class Primes
       @sieve[1] = true
     end
 
-    if @max < max
+    if max > @max
       m = @max
       @max = max
-      ((m+1)/2).upto((max+1)/2) {|i| @sieve[i] = true }
-      (m+1).upto(max) do |p|
+      (m/2).upto(max/2) {|i| @sieve[i] = true }
+      2.upto(max) do |p|
         next unless self[p]
         (p+p).step(max,p) do |i|
           @sieve[i/2] = false unless i.even?
@@ -31,9 +31,11 @@ class Primes
   end
 
   def [](num)
-    raise "number too big #{num} vs #{@max}" if num > @max
+    initialize(num) if num > @max
     num.odd? && @sieve[num/2]
   end
+
+  alias prime? []
 
   def to_s
     out = ""
@@ -41,15 +43,27 @@ class Primes
     out.chop
   end
 
-  @@primes = nil
+  @@primes = Primes.new(1000)
+
   def self.factors(num)
-    @@primes ||= Primes.new(num)
     @@primes.factors(num)
   end
 
   def self.each
-    @@primes ||= Primes.new(10_000)
     @@primes.each { |p| yield p }
+  end
+
+  def self.prime?(num)
+    @@primes[num]
+  end
+
+  def self.upto(num)
+    p = Primes.new(num)
+    ret = []
+    (2..num).each do |n|
+      ret << n if p.prime? n
+    end
+    ret
   end
 
   def factors(num)
@@ -78,6 +92,14 @@ class Primes
 end
 
 class Integer
+  def prime?
+    Primes.prime?(self)
+  end
+
+  def factors
+    Primes.factors(self)
+  end
+
   # Return all the divisors for the number
   def divisors
     fac = Primes.factors(self)
