@@ -140,12 +140,25 @@ def problem_31(value = 200)
     end
     num
   end
-
-  p coin_list
   change.call(value,coin_list)
 end
 
+def problem_32
+  values = {}
+  (1..9999).each do |x|
+    xa = x.to_s.split(//)
+    (1..99).each do |y|
+      ca = (xa + y.to_s.split(//) + (x*y).to_s.split(//))
+      if ca.length == 9 && (ca - ['0']).uniq.length == 9
+        values[x*y] = true
+        puts "#{x} * #{y} == #{x*y}"
+      end
+    end
+  end
+  values.keys.reduce(&:+)
+end
+
 if __FILE__ == $0
-  p problem_31
+  p problem_32
 end
 
