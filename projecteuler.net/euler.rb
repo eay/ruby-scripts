@@ -94,7 +94,14 @@ def problem_27
   max_a * max_b
 end
 
+def problem_28(num = 1001)
+  rings = (num-1)/2 # Must be odd size
+  (1..(num-1)/2).reduce(1) do |a,n|
+    a + (4*n+2)**2 - 12*n
+  end
+end
+
 if __FILE__ == $0
-  p problem_27
+  p problem_28
 end
 
