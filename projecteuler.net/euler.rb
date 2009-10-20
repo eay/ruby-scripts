@@ -158,7 +158,23 @@ def problem_32
   values.keys.reduce(&:+)
 end
 
+def problem_33
+  require 'rational'
+
+  total = Rational(1)
+  (1..9).each do |a|
+    (1..9).each do |b|
+      (1..9).each do |c|
+        ra = Rational(c*10 + a, a*10 + b)
+        rb = Rational(c, b)
+        total *= ra if ra == rb &&  ra != 1
+      end
+    end
+  end
+  puts total
+end
+
 if __FILE__ == $0
-  p problem_32
+  p problem_33
 end
 
