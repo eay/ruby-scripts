@@ -122,7 +122,30 @@ def problem_30(power = 5)
   total
 end
 
+def problem_31(value = 200)
+  coin_list = [1, 2, 5, 10, 20, 50, 100, 200]
+
+  change = lambda do |amount,coins|
+    coins = coins.dup
+    coin = coins.pop
+    num = 0
+    num = change.call(amount,coins) if coins.length >= 1
+    while coin <= amount do
+      amount -= coin        # Take one coins worth at a time
+      if amount == 0
+        num += 1
+      elsif coins.length >= 1
+        num += change.call(amount,coins)
+      end
+    end
+    num
+  end
+
+  p coin_list
+  change.call(value,coin_list)
+end
+
 if __FILE__ == $0
-  p problem_30
+  p problem_31
 end
 
