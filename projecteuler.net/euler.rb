@@ -101,7 +101,28 @@ def problem_28(num = 1001)
   end
 end
 
+def problem_29(num = 100)
+  nums = {}
+  (2..num).each do |a|
+    (2..num).each do |b|
+      nums[a**b] = true
+    end
+  end
+  nums.length
+end
+
+def problem_30(power = 5)
+  total = 0
+  pow = {}
+  10.times {|i| pow[i.to_s] = i**power}
+  (2..(10**(power+1)-1)).each do |n|
+    np = n.to_s.split(//).reduce(0) {|a,v| a + pow[v]}
+    total += n if n == np
+  end
+  total
+end
+
 if __FILE__ == $0
-  p problem_28
+  p problem_30
 end
 
