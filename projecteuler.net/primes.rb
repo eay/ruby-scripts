@@ -4,35 +4,47 @@ class Primes
   def initialize(max)
     unless @max
       @max = 3
+      @upto = 1
       @sieve = Array.new
       @sieve[0] = false
       @sieve[1] = true
     end
 
+    
     if max > @max
+      upto = @upto
+      while upto * upto < max
+        upto *= 2
+      end
       m = @max
-      @max = max
-      (m/2).upto(max/2) {|i| @sieve[i] = true }
-      2.upto(max) do |p|
+      @max = upto*upto
+#      puts "clear #{m/2}..#{@max/2}"
+      (m/2).upto(@max/2) {|i| @sieve[i] = true }
+      2.upto(upto) do |p|
         next unless self[p]
-        (p+p).step(max,p) do |i|
+        (@upto/p*p).step(@max,p) do |i|
+          next if i == p
           @sieve[i/2] = false unless i.even?
         end
       end
-      @max = max
+      @upto = upto
+#      puts "max = #{@max} upto = #{@upto}"
     end
   end
 
   def each
     yield 2
-    @sieve.each_index do |i|
-      yield i*2+1 if @sieve[i]
+    n = 1
+    loop do
+      yield n*2+1 if @sieve[n]
+      n += 1
+      initialize(@sieve.length * 2 * 2) if n == @sieve.length
     end
   end
 
   def [](num)
     initialize(num+num) if num > @max
-    num.odd? && @sieve[num/2]
+    num == 2 || (num.odd? && @sieve[num/2])
   end
 
   alias prime? []
@@ -60,7 +72,6 @@ class Primes
   end
 
   def self.upto(num)
-    @@primes.prime?(num)
     if block_given?
       Primes.each do |p|
         break if p > num

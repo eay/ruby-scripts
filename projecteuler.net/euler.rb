@@ -209,7 +209,38 @@ def problem_36
   }.reduce(0,&:+)
 end
 
+def problem_37
+  fprime = lambda { |n|
+    n.prime? && ((n < 10) || fprime.call(n.to_s[1,1_000_000].to_i))
+  }
+  bprime = lambda { |n|
+    n.prime? && (( n < 10) || bprime.call(n.to_s.chop.to_i))
+  }
+    
+  addp = lambda do |s,dir,&block|
+    return if s.length >= 7
+    %w{1 3 5 7 9}.each do |i|
+      [i+s,s+i].each_with_index do |ns,i|
+        next unless dir[i]
+        ndir = fprime.call(ns.to_i), bprime.call(ns.to_i)
+        next unless dir[i] == ndir[i]
+        block.call(ns) if ndir[0] && ndir[1]
+        addp.call(ns,ndir,&block)
+      end
+    end
+  end
+    
+  hit = {}
+  %w{1 2 3 5 7 9}.each do |s|
+    addp.call(s,[true,true]) do |p|
+      next if p.length  == 1
+      hit[p] = true
+    end
+  end
+  hit.keys.map(&:to_i).reduce(&:+)
+end
+
 if __FILE__ == $0
-  p problem_36
+  p problem_37
 end
 
