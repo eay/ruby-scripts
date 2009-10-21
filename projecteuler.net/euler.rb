@@ -240,7 +240,21 @@ def problem_37
   hit.keys.map(&:to_i).reduce(&:+)
 end
 
+def problem_38
+  ret = []
+  pandigital = lambda { |n| (n.to_s.split(//) - ['0']).uniq.length == 9 }
+  100_000.times do |i|
+    t = ""
+    (1..9).each do |j|
+      t += (i * j).to_s
+      ret << t.to_i if t.length == 9 && pandigital.call(t)
+      break if t.length >= 9
+    end
+  end
+  ret.sort.last
+end
+
 if __FILE__ == $0
-  p problem_37
+  p problem_38
 end
 
