@@ -187,13 +187,12 @@ end
 def problem_35
   num = 2 # 2 and 5
   Primes.upto(1_000_000) do |p|
-    next if p.to_s =~ /[024568]/
-    s = p.to_s.split(//)
+    next if (s = p.to_s) =~ /[024568]/
     good = true
-    len = p.to_s.length - 1
+    len = s.length - 1
     len.times do |i|
-      s.push s.shift
-      unless s.join.to_i.prime?
+      s= s[1..-1] + s[0,1]
+      unless s.to_i.prime?
         good = false
         break
       end
