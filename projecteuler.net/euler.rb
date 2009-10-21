@@ -189,8 +189,7 @@ def problem_35
   Primes.upto(1_000_000) do |p|
     next if (s = p.to_s) =~ /[024568]/
     good = true
-    len = s.length - 1
-    len.times do |i|
+    (s.length-1).times do |i|
       s= s[1..-1] + s[0,1]
       unless s.to_i.prime?
         good = false
@@ -202,7 +201,15 @@ def problem_35
   num
 end
 
+def problem_36
+  1_000_000.times.select { |n|
+    a = n.to_s(2)
+    b = n.to_s(10)
+    a == a.reverse && b == b.reverse
+  }.reduce(0,&:+)
+end
+
 if __FILE__ == $0
-  p problem_35
+  p problem_36
 end
 
