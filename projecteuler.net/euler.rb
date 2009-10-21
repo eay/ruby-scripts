@@ -184,7 +184,26 @@ def problem_34
   sum
 end
 
+def problem_35
+  num = 2 # 2 and 5
+  Primes.upto(1_000_000) do |p|
+    next if p.to_s =~ /[024568]/
+    s = p.to_s.split(//)
+    good = true
+    len = p.to_s.length - 1
+    len.times do |i|
+      s.push s.shift
+      unless s.join.to_i.prime?
+        good = false
+        break
+      end
+    end
+    num += 1 if good
+  end
+  num
+end
+
 if __FILE__ == $0
-  p problem_34
+  p problem_35
 end
 

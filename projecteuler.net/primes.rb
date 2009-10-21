@@ -31,7 +31,7 @@ class Primes
   end
 
   def [](num)
-    initialize(num) if num > @max
+    initialize(num+num) if num > @max
     num.odd? && @sieve[num/2]
   end
 
@@ -50,7 +50,9 @@ class Primes
   end
 
   def self.each
-    @@primes.each { |p| yield p }
+    @@primes.each do |p|
+      yield p
+    end
   end
 
   def self.prime?(num)
@@ -58,12 +60,19 @@ class Primes
   end
 
   def self.upto(num)
-    p = Primes.new(num)
-    ret = []
-    (2..num).each do |n|
-      ret << n if p.prime? n
+    @@primes.prime?(num)
+    if block_given?
+      Primes.each do |p|
+        break if p > num
+        yield p
+      end
+    else
+      ret = []
+      (2..num).each do |n|
+        ret << n if n.prime?
+      end
+      ret
     end
-    ret
   end
 
   def factors(num)
