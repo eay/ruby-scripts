@@ -92,6 +92,10 @@ class Primes
 end
 
 class Integer
+  def factorial
+    (1..self).reduce(1) {|a,n| a*n}
+  end
+
   def prime?
     Primes.prime?(self)
   end

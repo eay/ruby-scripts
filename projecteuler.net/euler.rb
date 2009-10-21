@@ -174,7 +174,17 @@ def problem_33
   puts total
 end
 
+def problem_34
+  f = (0..9).map(&:factorial)
+  sum = 0
+  (3..(9.factorial*7)).each do |n|
+    s = n.to_s
+    num += n if n == s.split(//).reduce(0) {|a,c| a += f[c.to_i]}
+  end
+  sum
+end
+
 if __FILE__ == $0
-  p problem_33
+  p problem_34
 end
 
