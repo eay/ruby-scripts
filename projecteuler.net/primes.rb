@@ -61,6 +61,10 @@ class Primes
     @@primes.factors(num)
   end
 
+  def self.factors_old(num)
+    @@primes.factors_old(num)
+  end
+
   def self.each
     @@primes.each do |p|
       yield p
@@ -68,7 +72,11 @@ class Primes
   end
 
   def self.prime?(num)
-    @@primes[num]
+    if num < 100_000
+      @@primes[num]
+    else
+      num.factors.length == 1
+    end
   end
 
   def self.upto(num)
@@ -86,11 +94,30 @@ class Primes
     end
   end
 
-  def factors(num)
+  def factors_old(num)
     check_sieve_size(num)
     fac = []
     each do |p|
       return(fac) if p > num
+      while num % p == 0
+        fac << p
+        num /= p
+        return(fac) if num == 1
+      end
+    end
+    # If we get to here there is a factor left that is > sqrt(num), so
+    # it's matching element must be less
+    fac << num
+  end
+
+  def factors(num)
+    sq = Math.sqrt(num).to_i
+    fac = []
+    each do |p|
+      if p > sq
+        fac << num
+        return(fac) 
+      end
       while num % p == 0
         fac << p
         num /= p
@@ -122,6 +149,10 @@ class Integer
 
   def factors
     Primes.factors(self)
+  end
+
+  def factors_old
+    Primes.factors_old(self)
   end
 
   # Return all the divisors for the number
