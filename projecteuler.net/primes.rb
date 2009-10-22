@@ -172,6 +172,27 @@ class Integer
   end
 end
 
+class Array
+  # yield with each possible ordering of the passed array.
+  # We must be passed at least 2 elements.
+  # The permutation is conducted starting with the last elements in the array
+  def permutate
+    if length == 2
+      yield [self[0],self[1]]
+      yield [self[1],self[0]]
+    else
+      b = dup
+      c = b.shift
+      self.each_index do |i|
+        b.permutate do |r|
+          yield [c] + r
+        end
+        b[i],c = c,b[i]
+      end
+    end
+  end
+end
+
 if __FILE__ == $0
   q = Primes.new(2_000)
   p q.factors(10)

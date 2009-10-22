@@ -5,22 +5,7 @@ require 'primes'
 def problem_41
   # hmm... if the sum of the digits is divisable by 3, it can never be prime,
   # so we only need to check 7 digits
-  pandigital = lambda { |n| (n.to_s.split(//) - ['0']).uniq.length == 9 }
-  permutate = lambda do |a,&block|
-    if a.length == 2
-      block.call [a[0],a[1]] unless a[1].even?
-      block.call [a[1],a[0]] unless a[0].even?
-    else
-      b = a.dup
-      c = b.shift
-      a.each_index do |i|
-        permutate.call(b) do |r|
-          block.call [c] + r unless r.last.even?
-        end
-        b[i],c = c,b[i]
-      end
-    end
-  end
+  # pandigital = lambda { |n| (n.to_s.split(//) - ['0']).uniq.length == 9 }
 
   numbers = [7,6,5,4,3]
   work = [2,1]
@@ -28,7 +13,7 @@ def problem_41
   while numbers.length > 0
     work = [ numbers.pop ] + work
     next if work.reduce(&:+) % 3 == 0
-    r = permutate.call(work) do |a|
+    r = work.permutate do |a|
       n = a.map(&:to_s).join.to_i
 #      puts n
       if n.prime?
