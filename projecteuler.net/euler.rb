@@ -13,7 +13,7 @@ def problem_41
   while numbers.length > 0
     work = [ numbers.pop ] + work
     next if work.reduce(&:+) % 3 == 0
-    r = work.permutate do |a|
+    r = work.my_permutate do |a|
       n = a.map(&:to_s).join.to_i
 #      puts n
       if n.prime?
@@ -28,14 +28,58 @@ def problem_41
   r
 end
 
+def problem_42
+  triangles = 50.times.reduce([0]) {|a,n|
+    a << a.last + n }.reduce({}) {|h,w| h[w] = true; h }
+
+  # Load file,
+  # remove "
+  # split on ,
+  # convert chars to a single number
+  # select triangle words
+  # number of them
+  ret = open("words.txt").read.tr('"','').split(/,/).map { |w|
+    w.bytes.reduce(0) {|a,c| a + c - 64}
+  }.select {|n| triangles[n]}.length
+#  p w
+end
+
+def problem_43
+  nums = [2,3,5,7,11,13,17].map do |p|
+    (12..987).map do |n|
+      ns = n.to_s.split(//)
+      ns[0,0] = "0" if ns.length == 2 # Never 1
+      case
+      when n % p != 0 then nil
+      when ns.length == ns.uniq.length then ns
+      else nil
+      end
+    end.compact
+  end
+  # nums is now 7 arrays of arrays that contain 3 pandigital divisable
+  # 'numbers'.  They are actually chars.
+  hits = []
+  doit = lambda do |n_off,n,nums|
+    if nums.length == 0 
+      hits << ((%w{0 1 2 3 4 5 6 7 8 9} - n) +n).join.to_i
+      return
+    end
+    nums.first.each do |nn|
+      if n[n_off] == nn[0] && n[n_off+1] == nn[1]
+        n1 = n + [nn[2]]
+        next if n1.uniq.length != n1.length
+        doit.call(n_off+1,n1,nums[1,10])
+      end
+    end
+  end
+
+  nums.first.each do |na|
+    doit.call(1,na,nums[1,10])
+  end
+  hits.reduce(&:+)
+end
+
 if __FILE__ == $0
-#  (999_999_999).times do |i|
-#    n = Primes.factors(i)
-#    o = Primes.factors_old(i)
-#    puts "BAD #{i} o = #{o.inspect} n = #{n.inspect}" if Primes.factors(i) != Primes.factors_old(i)
-#    puts i if i % 10_000 == 0
-#    puts "HIT #{i}" if i.prime?
-#  end
-  p problem_41
+  p problem_43
 end
 

@@ -176,7 +176,7 @@ class Array
   # yield with each possible ordering of the passed array.
   # We must be passed at least 2 elements.
   # The permutation is conducted starting with the last elements in the array
-  def permutate
+  def my_permutate
     if length == 2
       yield [self[0],self[1]]
       yield [self[1],self[0]]
@@ -184,7 +184,7 @@ class Array
       b = dup
       c = b.shift
       self.each_index do |i|
-        b.permutate do |r|
+        b.my_permutate do |r|
           yield [c] + r
         end
         b[i],c = c,b[i]
