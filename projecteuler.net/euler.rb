@@ -61,7 +61,7 @@ def problem_43
   hits = []
   doit = lambda do |n_off,n,nums|
     if nums.length == 0 
-      hits << ((%w{0 1 2 3 4 5 6 7 8 9} - n) +n).join.to_i
+      hits << ((%w{0 1 2 3 4 5 6 7 8 9} - n) + n).join.to_i
       return
     end
     nums.first.each do |nn|
@@ -79,7 +79,52 @@ def problem_43
   hits.reduce(&:+)
 end
 
+# For a Pentagonal number, given by the formula Pn = n(3n-1)/2
+# (Pn + Pn1) - (Pn - Pn1) == 2*Pn
+# (Pn + Pn9) - (Pn - Pn9) == 2*Pn
+# The distance to the upper term is not relevent.  So we need to find
+# 2 Pentagonal numbers that are 2*Pn apart.
+# sqrt(n * 2 /3).ceil return the closest (up) pantagonal number value.
+# A back check will confirm if it is a true pantagonal number.
+#
+# P1020, P2167 => -term is P1912 and +term is P2395
+def problem_44
+  max = 10_000
+  max_d = 1200
+  pent = lambda {|n| n*(3*n - 1)/2 }
+
+#  n2p={}
+#  p2n={}
+#  (0..max).each do |i|
+#    p = pent.call(i)
+#    n2p[i] = p
+#    p2n[p] = i
+#    puts i
+#  end
+
+  is_pent = lambda do |n|
+    pent.call(Math.sqrt(n.to_f * 2 / 3).ceil) == n
+  end
+  npent = lambda {|n,d| pent.call(n+d) - pent.call(n) }
+  ppent = lambda {|n,d| pent.call(n+d) + pent.call(n) }
+  pdiff = lambda {|n,d| ppent.call(n,d) - npent.call(n,d) }
+
+  m10 = 10_000
+  (1..(max - max_d)).each do |i|
+    puts (i+1) if (i+1) % m10 == 0
+    p1 = pent.call(i)
+    ((i+1)..(i+max_d)).each do |j|
+      p2 = pent.call(j)
+      if is_pent.call(p2 - p1) && is_pent.call(p2 + p1)
+        #puts "BINGO + #{i} #{j} D = #{j - i}" 
+        return(p2-p1)
+      end
+                                               
+    end
+  end
+end
+
 if __FILE__ == $0
-  p problem_43
+  p problem_44
 end
 
