@@ -154,7 +154,33 @@ def problem_45
   end
 end
 
+def problem_46
+  sqn = 2
+  sq = 4
+  sql = [2]
+
+  n = 7
+  loop do
+    n += 2
+    next if n.prime?
+    while 2*sq < n
+      sql << 2*sq
+      sqn += 1
+      sq = sqn**2
+    end
+#    puts "#{n} #{sql}"
+    ok = false
+    sql.each do |s|
+      if (n - s).prime?
+        ok = true
+        break;
+      end
+    end
+    return n unless ok
+  end
+end
+
 if __FILE__ == $0
-  p problem_45
+  p problem_46
 end
 
