@@ -34,11 +34,10 @@ class Primes
 
   def each
     yield 2
-    n = 1
+    n = 3
     loop do
-      yield n*2+1 if @sieve[n]
-      n += 1
-      initialize(@sieve.length * 2 * 2) if n == @sieve.length
+      yield n if n.prime?
+      n += 2
     end
   end
 
