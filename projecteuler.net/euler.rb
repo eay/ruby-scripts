@@ -124,7 +124,37 @@ def problem_44
   end
 end
 
+def problem_45
+  nT = lambda {|n| n*(n+1)/2 }
+  nP = lambda {|n| n*(3*n-1)/2 }
+  nH = lambda {|n| n*(2*n-1) }
+
+  t,p,h = 2,2,2
+  puts "#{t} #{p} #{h}"
+  tn,pn,hn = nT.call(t),nP.call(p),nH.call(h)
+  loop do
+    while tn != pn || pn != hn do
+      while pn < hn
+        p += 1
+        pn = nP.call(p)
+      end
+      while tn < pn
+        t += 1
+        tn = nT.call(t)
+      end
+      while hn < tn
+        h += 1
+        hn = nH.call(h)
+      end
+    end
+    puts "#{t}(#{tn}) #{p}(#{hn}) #{h}(#{hn})"
+    return(tn) if t > 285 
+    t += 1
+    tn = nT.call(t)
+  end
+end
+
 if __FILE__ == $0
-  p problem_44
+  p problem_45
 end
 
