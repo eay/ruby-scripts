@@ -181,17 +181,18 @@ def problem_46
 end
 
 def problem_47
+  num = 4
   count,n = 0,3
   loop do
-    if n.factors.uniq.length == 4
+    if n.factors.uniq.length == num
       count += 1
-      break if count == 4
+      break if count == num
     else
       count = 0
     end
     n += 1
   end
-  n - 3
+  n + 1 - num
 end
 
 if __FILE__ == $0
