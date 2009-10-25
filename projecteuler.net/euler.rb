@@ -180,7 +180,21 @@ def problem_46
   end
 end
 
+def problem_47
+  count,n = 0,3
+  loop do
+    if n.factors.uniq.length == 4
+      count += 1
+      break if count == 4
+    else
+      count = 0
+    end
+    n += 1
+  end
+  n - 3
+end
+
 if __FILE__ == $0
-  p problem_46
+  p problem_47
 end
 
