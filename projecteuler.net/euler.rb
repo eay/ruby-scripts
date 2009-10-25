@@ -195,7 +195,16 @@ def problem_47
   n + 1 - num
 end
 
+def problem_48
+  t = 0
+  (1..1_000).each do |i|
+    t += i ** i
+    puts i
+  end
+  t.to_s[-10,10]
+end
+
 if __FILE__ == $0
-  p problem_47
+  p problem_48
 end
 
