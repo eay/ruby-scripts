@@ -196,12 +196,7 @@ def problem_47
 end
 
 def problem_48
-  t = 0
-  (1..1_000).each do |i|
-    t += i ** i
-    puts i
-  end
-  t.to_s[-10,10]
+  (1..1_000).reduce(0) {|a,i| a + i**i }.to_s[-10,10]
 end
 
 if __FILE__ == $0
