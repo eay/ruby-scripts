@@ -2,9 +2,10 @@
 
 main()
 	{
-	unsigned long long a,b,c,aabb,cc;
-	unsigned int num,max_num,max_p,p;
+	long long a,b,c,aabb,cc;
+	long num,max_num,max_p,p;
 
+	max_num = 0;
 	for (p=12; p<1000; p++)
 		{
 		num = 0;
@@ -28,9 +29,9 @@ main()
 			{
 			max_num = num;
 			max_p = p;
-			printf("max_p = %u %u\n",max_p,num);
+			printf("max_p = %lu %lu\n",max_p,num);
 			}
 		}
-	printf("max_p = %u\n",max_p);
+	printf("max_p = %lu\n",max_p);
 	}
 
