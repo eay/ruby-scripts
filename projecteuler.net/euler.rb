@@ -199,7 +199,31 @@ def problem_48
   (1..1_000).reduce(0) {|a,i| a + i**i }.to_s[-10,10]
 end
 
+def problem_49
+  nums = Primes.upto(9999).select {|p| p >= 1000}
+  freq = {}
+  nums.each do |p|
+   i = p.to_s.split(//).sort.join.to_i
+   freq[i] ||= []
+   freq[i] << p
+  end
+  freq.each_pair do |k,v|
+    next unless v.length >= 3
+    v.sort!
+    (v.length - 2).times do |offset|
+      v.permutation(3).map(&:sort).uniq.each do |v|
+        if (v[2] - v[1]) == (v[1] - v[0])
+          if v[0] != 1487
+            return v.map(&:to_s).join.to_i
+          end
+        end
+      end
+    end
+  end
+  nil
+end
+
 if __FILE__ == $0
-  p problem_48
+  p problem_49
 end
 
