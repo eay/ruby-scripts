@@ -108,13 +108,30 @@ def problem_53
   count
 end
 
+def problem_54
+end
+
+def problem_55
+  l_nums = 0
+  (1...10_000).each do |trial|
+    n = trial
+    50.times do |num|
+      if (n += n.to_s.reverse.to_i).palindrome?
+        l_nums -= 1
+        puts "#{trial} -> #{n} #{num} good"
+        break
+      end
+    end
+    l_nums += 1
+  end
+  l_nums
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_51
-  p problem_52
-  p problem_53
+  p problem_55
 end
 
