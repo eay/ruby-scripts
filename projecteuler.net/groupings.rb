@@ -1,5 +1,36 @@
-class Integer
+class String
+  # Return an array of the index that the character can be found at
+  def indexes(c)
+    ret = []
+    offset = 0
+    while i = self.index(c,offset)
+      ret << i
+      offset = i + 1
+    end
+    ret
+  end
+end
 
+
+class Array
+  # Return the array with element in the passed array removed, but only
+  # once
+  # [1,1,2,3] ^ [1,2,3] => [1]
+  def remove!(a)
+    a.each do |e|
+      if i = self.index(e)
+        self.delete_at(i)
+      end
+    end
+    self
+  end
+
+  def remove(a)
+    self.dup.remove!(a)
+  end
+end
+
+class Integer
   # return all groupings of n elements
   # If n in 4,
   # [1,1,1,1]
