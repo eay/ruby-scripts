@@ -69,28 +69,6 @@ def problem_51
       end
     end
   end
-
-
-  if false
-  match = []
-  (0..(num-2)).each do |index| # -2 because bottom digit can't change much
-    match[index] = []
-    (0..9).each do |d|
-      c = d.to_s
-      r = []
-      r << sp.select do |n|
-        n[index] == c && n.count(c) > 1
-      end
-      (3..num).each do |t|
-        r << r[0].select {|n| n.count(c) == t} || []
-      end
-      p r.length
-      puts "(#{index},#{c}) => #{r[0].length} #{r[1].length} #{r[2].length} #{r[3].length}"
-      match[index][c.to_i] = r
-      puts r[2].inspect if r[2].length == 10
-    end
-  end
-  end
 end
 
 def problem_52
@@ -136,5 +114,7 @@ end
 
 if __FILE__ == $0
   p problem_51
+  p problem_52
+  p problem_53
 end
 
