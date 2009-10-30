@@ -31,6 +31,13 @@ class Array
 end
 
 class Integer
+  def palindrome?
+    s = self.to_s
+    # len = s.length/2
+    # s[0,len] == s[-len,len].reverse
+    s == s.reverse
+  end
+
   # return all groupings of n elements
   # If n in 4,
   # [1,1,1,1]
