@@ -310,11 +310,51 @@ def problem_58
 
 end
 
+def problem_59
+  chars = open("cipher1.txt").read.chomp.split(/,/).map(&:to_i)
+  ascii = 32 .. 126
+  s = chars.each_slice(3).to_a
+  g = s[0].zip(*s[1,s.length-1]).map(&:compact) # Make 3 arrays of the bytes
+  keys = []
+  g.each_index do |i|
+    wa = g[i]
+    max_sp,k = 0,0
+    ('a'..'z').each do |key|
+      i = key.bytes.first
+      good = true
+      wa.each do |c|
+        unless ascii === (c ^ i)
+          good = false
+          break
+        end
+      end
+      if good
+        # Save the space and 'e' frequency
+        sp = wa.select {|c| c == (32 ^ i)}.length
+        if sp > max_sp
+          k = i
+          max_sp = sp
+        end
+      end
+    end
+    keys << k
+  end
+  out = []
+  s.each do |a0,a1,a2|
+    out << (a0 ^ keys[0])
+    out << (a1 ^ keys[1]) if a1
+    out << (a2 ^ keys[2]) if a2
+  end
+  puts  out.map(&:chr).join
+  puts keys.map(&:chr).join
+  out.reduce(&:+)
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_58
+  p problem_59
 end
 
