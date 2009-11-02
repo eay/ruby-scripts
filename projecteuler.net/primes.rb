@@ -74,7 +74,7 @@ class Primes
     if num < 100_000
       @@primes[num]
     else
-      num.factors.length == 1
+      @@primes.prime_check_factors(num)
     end
   end
 
@@ -108,7 +108,7 @@ class Primes
     # it's matching element must be less
     fac << num
   end
-
+  
   def factors(num)
     sq = Math.sqrt(num).to_i
     fac = []
@@ -126,6 +126,17 @@ class Primes
     # If we get to here there is a factor left that is > sqrt(num), so
     # it's matching element must be less
     fac << num
+  end
+
+  # Check if a number is prime by trying to find factors.
+  # This method only needs the primes upto sqrt(num).  So for big
+  # primes, this is the way to go.
+  def prime_check_factors(num)
+    sq = Math.sqrt(num).to_i
+    each do |p|
+      return true if p > sq
+      return false if num % p == 0
+    end
   end
 
   private

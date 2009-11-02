@@ -261,11 +261,60 @@ def problem_56
   max
 end
 
+require 'rational'
+# Use ruby1.9 or it is very very slow
+def problem_57a
+  root2 = lambda do |depth|
+    if depth == 0
+      Rational(1,2) 
+    else
+      Rational(1,(root2.call(depth - 1) + 2))
+    end
+  end
+  ret = 0
+  1000.times do |n|
+    r = root2.call(n) + 1
+    ret += 1 if r.numerator.to_s.length > r.denominator.to_s.length
+  end
+  ret
+end
+
+# This is the correct way to do things
+def problem_57
+  ret,n,d = 0,1,1
+  1000.times do |i|
+    n,d = (n+2*d),(n+d)
+    ret += 1 if n.to_s.length > d.to_s.length
+  end
+  ret
+end
+
+def problem_58
+  side = 1
+  d = [1,1,1,1]
+  total,primes = 1,0
+  loop do
+    d[0] = d[3] + side + 1
+    d[1] = d[0] + side + 1
+    d[2] = d[1] + side + 1
+    d[3] = d[2] + side + 1
+    side += 2
+    total += 4
+    #puts "#{primes}/#{total} #{d.inspect}"
+#    printf "#{side} %.2f\n", primes.to_f/total.to_f * 100.0
+    (0..2).each do |i|
+      primes += 1 if d[i].prime?
+    end
+    return(side) if primes * 10 < total
+  end
+
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_56
+  p problem_58
 end
 
