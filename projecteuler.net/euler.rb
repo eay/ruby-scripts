@@ -350,11 +350,34 @@ def problem_59
   out.reduce(&:+)
 end
 
+def problem_60
+  Primes.each do |p|
+    # Can the prime be chopped into two 2 primes?
+    s = p.to_s
+    pair = []
+    hpair = {}
+    (1.. s.length-1).each do |i|
+      a = s[0,i]
+      b = s[i,s.length-1]
+      if a.to_i.prime? && b.to_i.prime? && (c = (b + a).to_i).prime?
+        sp = [a,b].sort
+        puts hpair[sp.join(' ')].class
+        unless hpair[sp.join(' ')]
+          hpair[sp.join(' ')] = sp
+          puts "#{p} => #{sp[0]} #{sp[1]} #{c}"
+          pair << [a,b]
+        end
+      end
+    end
+    break if p > 110000
+  end
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_59
+  p problem_60
 end
 
