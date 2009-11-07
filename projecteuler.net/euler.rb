@@ -351,26 +351,93 @@ def problem_59
 end
 
 def problem_60
+  num_cut = 4
+  pairs = {}
+  seen_primes = []
+  seen_primes_sum = []
+  num_primes = 0
+  last = start = Time.now
   Primes.each do |p|
-    # Can the prime be chopped into two 2 primes?
-    s = p.to_s
-    pair = []
-    hpair = {}
-    (1.. s.length-1).each do |i|
-      a = s[0,i]
-      b = s[i,s.length-1]
-      if a.to_i.prime? && b.to_i.prime? && (c = (b + a).to_i).prime?
-        sp = [a,b].sort
-        puts hpair[sp.join(' ')].class
-        unless hpair[sp.join(' ')]
-          hpair[sp.join(' ')] = sp
-          puts "#{p} => #{sp[0]} #{sp[1]} #{c}"
-          pair << [a,b]
+    if (num_primes += 1) % 100 == 0
+      time_now = Time.now
+      total_time = (time_now - start).to_i
+      elapsed_time = (time_now - last).to_i
+      last =  time_now
+      puts "num_primes: #{num_primes} upto #{p} #{elapsed_time}sec #{total_time}sec"
+
+#      exit if p > 1620
+    end
+
+    b = p.to_s
+    sum_p = b.split(//).map(&:to_i).reduce(&:+)
+    seen_primes.each_index do |sp_i|
+      sp = seen_primes[sp_i]
+      break if sp > 5000
+      if (sum_p + seen_primes_sum[sp_i]) % 6 == 0
+        next 
+      end
+      a = sp.to_s
+      if (b + a).to_i.prime? && (a + b).to_i.prime?
+        # We have a pair that works both ways so add the peer to each
+        # prime
+        ai,bi = a.to_i,b.to_i
+        aa = pairs[ai] ||= []
+        ba = pairs[bi] ||= []
+        (aa << bi).uniq!
+        (ba << ai).uniq!
+        # Check each addition
+        k = [ai,bi].max
+#        puts "#{p} => #{pairs.length}"
+
+        next unless pairs[k].length >= num_cut - 1
+#        puts "check #{p} => #{k} => #{pairs[k].inspect}"
+        ka = [k] + pairs[k]
+        aa = pairs[k].reduce(ka) do |x,y|
+          r = x & ([y] + pairs[y])
+          break if r.length < num_cut
+          r
+        end
+        if aa && aa.length >= num_cut # A candidate
+          perm = aa.permutation(2).to_a
+          new = perm.select do |x,y|
+            (x.to_s + y.to_s).to_i.prime? && (x.to_s + y.to_s).to_i.prime?
+          end
+          if new.length == perm.length
+            n = new.flatten.uniq
+            sum = n.reduce(&:+)
+            puts "#{n.inspect} ***  #{sum}"
+          end
         end
       end
     end
-    break if p > 110000
+    seen_primes << p
+    seen_primes_sum << sum_p
+#    puts "#{k} => #{aa.length} #{aa.sort.inspect} #{aa.reduce(&:+)}"
   end
+  nil
+end
+
+def problem_61
+  funcs = []
+  funcs << lambda {|n| n*(1*n+1)/2 }
+  funcs << lambda {|n| n*(2*n  )/2 }
+  funcs << lambda {|n| n*(3*n-1)/2 }
+  funcs << lambda {|n| n*(4*n-2)/2 }
+  funcs << lambda {|n| n*(5*n-3)/2 }
+  funcs << lambda {|n| n*(6*n-4)/2 }
+
+  numbers = funcs.map do |l|
+    ret = []
+    10000.times do |i|
+      n = l.call(i)
+      next if n < 1000
+      break if n >= 10_000
+      ret << n
+    end
+    ret
+  end
+  snum = numbers.map {|a| a.map {|b| b.to_s}}
+  p snum
 end
 
 def problem_67
