@@ -466,7 +466,7 @@ def problem_61
   # we are back at the start
   f = Proc.new do |numbers,f_index,num,nums|
     numbers += [num]
-    puts "#{numbers.first} => #{num} #{nums.length}"
+#    puts "#{numbers.first} => #{num} #{nums.length}"
     # First, which arrays have matches
 
     nums.each_index do |index|
@@ -474,7 +474,7 @@ def problem_61
       next_nums = nums.dup
       me = next_nums.delete_at(index)
       me.grep(/^#{num[2,2]}/).each do |hit| # each mach
-        puts "#{num} -> hit => #{hit}"
+#        puts "#{num} -> hit => #{hit}"
         if nums.length == 1
           if numbers.first[0,2] == hit[2,2]
             numbers += [ hit ]
