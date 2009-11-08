@@ -537,11 +537,32 @@ def problem_63
   count
 end
 
+def problem_64
+  sqrt = lambda do |n|
+    f = Math.sqrt(n.to_f).floor.to_i
+    out = [f]
+    loop do
+      top,bottom = f, n - f*f
+      t = (f + d)
+      out << t / d
+      t - out.last * d
+      return out if out.length > 10
+    end
+  end
+
+  p  sqrt.call 23
+  return
+  (2..10_000).each do |num|
+    p  sqrt.call num.to_f
+    next if sq.to_i ** 2 == num
+  end
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_63
+  p problem_64
 end
 
