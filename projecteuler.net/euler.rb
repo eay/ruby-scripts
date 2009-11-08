@@ -524,11 +524,24 @@ def problem_62
   end
 end
 
+def problem_63
+  count = 0
+  (1..100).each do |n|
+    100.times do |x|
+      nx = n ** x
+      nxl = nx.to_s.length
+      #puts "#{n} ** #{x} => #{nxl}" if nxl == x
+      count += 1 if nxl == x
+    end
+  end
+  count
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_62
+  p problem_63
 end
 
