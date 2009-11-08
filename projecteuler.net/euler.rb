@@ -496,11 +496,27 @@ def problem_61
   "miss"
 end
 
+def problem_62
+  cube_perms = {}
+  n = 300
+  loop do
+    q = n*n*n
+    qs = q.to_s.split(//).sort.join
+    cube_perms[qs] ||= []
+    cube_perms[qs] << n
+    if cube_perms[qs].length >= 5
+      puts cube_perms[qs].inspect
+      return cube_perms[qs].first ** 3
+    end
+    n += 1
+  end
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_61
+  p problem_62
 end
 
