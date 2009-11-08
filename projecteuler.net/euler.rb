@@ -350,55 +350,41 @@ def problem_59
   out.reduce(&:+)
 end
 
+# 26033 ["13", "5197", "5701", "6733", "8389"]
+# No array, but slower than problem_60a
+# This caused me lots of problems.  The main issue was given 2 primes that
+# pair, how do we check their common pairings?  In this case I simply
+# make sure they have more than num_cut common elements, then re-check
+# all of them (all permutations).  I'm not totaly sure if the case can
+# occur where the 2 numbers share 6 elements but only 5 are good for
+# the solution.  The permutate code would fail in this case.
 def problem_60
-  num_cut = 4
+  num_cut = 5
+# simple
   pairs = {}
   seen_primes = []
-  seen_primes_sum = []
   num_primes = 0
   last = start = Time.now
   Primes.each do |p|
-    if (num_primes += 1) % 100 == 0
-      time_now = Time.now
-      total_time = (time_now - start).to_i
-      elapsed_time = (time_now - last).to_i
-      last =  time_now
-      puts "num_primes: #{num_primes} upto #{p} #{elapsed_time}sec #{total_time}sec"
-
-#      exit if p > 1620
-    end
-
+    next if p == 2
     b = p.to_s
-    sum_p = b.split(//).map(&:to_i).reduce(&:+)
     seen_primes.each_index do |sp_i|
       sp = seen_primes[sp_i]
-      break if sp > 5000
-      if (sum_p + seen_primes_sum[sp_i]) % 6 == 0
-        next 
-      end
       a = sp.to_s
-      if (b + a).to_i.prime? && (a + b).to_i.prime?
-        # We have a pair that works both ways so add the peer to each
-        # prime
-        ai,bi = a.to_i,b.to_i
-        aa = pairs[ai] ||= []
-        ba = pairs[bi] ||= []
-        (aa << bi).uniq!
-        (ba << ai).uniq!
-        # Check each addition
-        k = [ai,bi].max
-#        puts "#{p} => #{pairs.length}"
+      ai,bi = a.to_i,b.to_i
+      ab = (a + b).to_i
+      ba = (b + a).to_i
 
-        next unless pairs[k].length >= num_cut - 1
-#        puts "check #{p} => #{k} => #{pairs[k].inspect}"
-        ka = [k] + pairs[k]
-        aa = pairs[k].reduce(ka) do |x,y|
-          r = x & ([y] + pairs[y])
-          break if r.length < num_cut
-          r
-        end
-        if aa && aa.length >= num_cut # A candidate
-          perm = aa.permutation(2).to_a
+      if ba.prime? && ab.prime?
+        # We have a pair that works both ways so add the peer to each prime
+        pairs[ai] = aa = ((pairs[ai] || []) << bi).uniq
+        pairs[bi] = bb = ((pairs[bi] || []) << ai).uniq
+        next unless pairs[bi].length >= num_cut - 1 # bi is biggest of pair
+
+        check = ([ai] + aa) & ([bi] + bb)
+        if check.length >= num_cut
+          puts "Try #{check.inspect}"
+          perm = check.permutation(2).to_a
           new = perm.select do |x,y|
             (x.to_s + y.to_s).to_i.prime? && (x.to_s + y.to_s).to_i.prime?
           end
@@ -406,15 +392,58 @@ def problem_60
             n = new.flatten.uniq
             sum = n.reduce(&:+)
             puts "#{n.inspect} ***  #{sum}"
+            return sum
           end
         end
       end
     end
     seen_primes << p
-    seen_primes_sum << sum_p
-#    puts "#{k} => #{aa.length} #{aa.sort.inspect} #{aa.reduce(&:+)}"
   end
   nil
+end
+
+# 26033 ["13", "5197", "5701", "6733", "8389"]
+def problem_60a
+  prime_check = lambda do |a,b|
+    (a + b).to_i.prime? && (b + a).to_i.prime?
+  end
+
+  find_match = lambda do |a,k|
+    r = a.select {|p| k != p && prime_check.call(k,p) }
+  end
+
+  primes = Primes.upto(10_000).map(&:to_s)
+  primes.delete("2")
+
+  hit = {}
+
+  primes.each do |p1|
+    p1a = find_match.call(primes,p1)
+    p1a.each do |p2|
+      p2a = find_match.call(p1a,p2)
+      p2a.each do |p3|
+        p3a = find_match.call(p2a,p2)
+        p3a.each do |p3|
+          p4a = find_match.call(p3a,p3)
+          p4a.each do |p4|
+            p5a = find_match.call(p4a,p4)
+            if p5a.length > 0
+              p5a.each do |p5|
+                a = [p1,p2,p3,p4,p5]
+                sum = a.map(&:to_i).reduce(&:+)
+                unless hit[sum]
+                  puts "#{sum} #{a.inspect}"
+                else
+                  hit[sum] = true
+                end
+                return sum
+              end
+            end
+          end
+        end
+      end
+    end
+  end
 end
 
 def problem_61
@@ -445,6 +474,6 @@ def problem_67
 end
 
 if __FILE__ == $0
-  p problem_60
+  p problem_60a
 end
 

@@ -1,3 +1,14 @@
+if RUBY_VERSION < "1.8.7"
+  class Integer
+    def even?
+      self & 0x01 == 0
+    end
+    def odd?
+      self & 0x01 == 1
+    end
+  end
+end
+
 class Primes
   include Enumerable
 
@@ -71,7 +82,7 @@ class Primes
   end
 
   def self.prime?(num)
-    if num < 100_000
+    if num <= 100_000
       @@primes[num]
     else
       @@primes.prime_check_factors(num)
@@ -132,10 +143,12 @@ class Primes
   # This method only needs the primes upto sqrt(num).  So for big
   # primes, this is the way to go.
   def prime_check_factors(num)
+    # The following line slows things down
+    # return false if num.to_s.split(//).reduce(&:+) % 6 == 0
     sq = Math.sqrt(num).to_i
     each do |p|
-      return true if p > sq
       return false if num % p == 0
+      return true if p >= sq
     end
   end
 
