@@ -447,26 +447,53 @@ def problem_60a
 end
 
 def problem_61
-  funcs = []
-  funcs << lambda {|n| n*(1*n+1)/2 }
-  funcs << lambda {|n| n*(2*n  )/2 }
-  funcs << lambda {|n| n*(3*n-1)/2 }
-  funcs << lambda {|n| n*(4*n-2)/2 }
-  funcs << lambda {|n| n*(5*n-3)/2 }
-  funcs << lambda {|n| n*(6*n-4)/2 }
+  # Functions for Triangle to Octagonal numbers
+  funcs = (3..8).map {|x| lambda {|n| n*((x-2)*n+4-x)/2 }}
 
+  # Generate all 4 digits numbers of each type
   numbers = funcs.map do |l|
     ret = []
     10000.times do |i|
       n = l.call(i)
       next if n < 1000
       break if n >= 10_000
-      ret << n
+      ret << n.to_s
     end
     ret
   end
-  snum = numbers.map {|a| a.map {|b| b.to_s}}
-  p snum
+  # Now we do the search, numbers is the array of the different types of
+  # numbers.  We need to find a cycle where when we run out of numbers,
+  # we are back at the start
+  f = Proc.new do |numbers,f_index,num,nums|
+    numbers += [num]
+    puts "#{numbers.first} => #{num} #{nums.length}"
+    # First, which arrays have matches
+
+    nums.each_index do |index|
+      next_index = f_index + [index]
+      next_nums = nums.dup
+      me = next_nums.delete_at(index)
+      me.grep(/^#{num[2,2]}/).each do |hit| # each mach
+        puts "#{num} -> hit => #{hit}"
+        if nums.length == 1
+          if numbers.first[0,2] == hit[2,2]
+            numbers += [ hit ]
+            puts numbers.inspect
+            puts "Array index for each round => #{next_index.inspect}"
+            return numbers.map(&:to_i).reduce(&:+)
+          end
+        else
+          f.call(numbers,next_index,hit,next_nums)
+        end
+      end
+    end
+  end
+
+  numbers.pop.each do |n|
+    f.call([],[0],n,numbers)
+  end
+  # Should not get here
+  "miss"
 end
 
 def problem_67
@@ -474,6 +501,6 @@ def problem_67
 end
 
 if __FILE__ == $0
-  p problem_60a
+  p problem_61
 end
 
