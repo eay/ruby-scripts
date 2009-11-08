@@ -497,16 +497,28 @@ def problem_61
 end
 
 def problem_62
+  # NOTE: their may be another number with a smaller first permutation,
+  # but that check was not needed for 5 numbers
+  sol = nil
   cube_perms = {}
   n = 300
   loop do
-    q = n*n*n
+    q = n ** 3
     qs = q.to_s.split(//).sort.join
     cube_perms[qs] ||= []
     cube_perms[qs] << n
     if cube_perms[qs].length >= 5
       puts cube_perms[qs].inspect
-      return cube_perms[qs].first ** 3
+      qsf = cube_perms[qs].first 
+      unless sol 
+        sol = qsf
+      else # We have a solution, see if this is smaller
+        if sol > qsf
+          sol = qsf
+        elsif sol.to_s.length < qsf.to_s.length
+          return sol ** 3
+        end
+      end
     end
     n += 1
   end
