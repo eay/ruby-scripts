@@ -193,6 +193,16 @@ class Integer
   def sum_of_divisors
     divisors.reduce(-self,&:+)
   end
+
+  # Return Euler's totient, or the number of number of positive integers
+  # less than or equal to n that are co-prime.  The order of the number.
+  def totient
+    n = self
+    self.factors.uniq.sort.each do |f|
+      n = n*(f-1)/f
+    end
+    n
+  end
 end
 
 class Array

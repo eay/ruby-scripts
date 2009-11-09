@@ -67,7 +67,13 @@ def problem_69
   n
 end
 
+def problem_70
+  (1..10_000_000).each do |n|
+    t = n.totient
+  end
+end
+
 if __FILE__ == $0
-  p problem_69
+  p problem_70
 end
 
