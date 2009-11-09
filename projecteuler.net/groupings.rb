@@ -76,7 +76,24 @@ class Integer
     # We get some duplicates
     start.uniq
   end
+
+  def sqrt_seq(n)
+    sqrt = Math.sqrt(n.to_f).floor.to_i
+    top,bot = 1,-sqrt
+    out = []
+    loop do
+      new_top = -bot
+      new_bot = (n - (bot * bot)) / top
+      break nil if new_bot == 0
+      digit = (new_top + sqrt) / new_bot
+      new_top -= digit * new_bot
+      out << digit
+      top,bot = new_bot,new_top
+      return out if top == 1 && bot == -sqrt
+    end
+  end
 end
+
 
 
 if __FILE__ == $0

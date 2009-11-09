@@ -538,25 +538,9 @@ def problem_63
 end
 
 def problem_64
-  sqrt_seq = lambda do |n|
-    sqrt = Math.sqrt(n.to_f).floor.to_i
-    top,bot = 1,-sqrt
-    out = []
-    loop do
-      new_top = -bot
-      new_bot = (n - (bot * bot)) / top
-      break nil if new_bot == 0
-      digit = (new_top + sqrt) / new_bot
-      new_top -= digit * new_bot
-      out << digit
-      top,bot = new_bot,new_top
-      break out if top == 1 && bot == -sqrt
-    end
-  end
-
   odd,max = 0,0
   (2..10_000).each do |num|
-    next unless r = sqrt_seq.call(num)
+    next unless r = num.sqrt_seq(num)
     puts "#{num} => #{r.length}"
     max = [max,r.length].max
     odd += 1 if r.length.odd?
