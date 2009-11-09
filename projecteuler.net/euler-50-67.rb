@@ -565,11 +565,27 @@ def problem_64
   odd
 end
 
+def problem_65
+  work = lambda do |start,seq,finish|
+    ltop,lbot,top,bot = 1, 0, start, 1
+    seq.cycle do |v|
+      v = v.call if v.is_a? Proc
+      ltop,lbot,top,bot = top,bot, ltop + top * v, lbot + bot * v
+      # puts "#{top} / #{bot}"
+      return [top,bot] if (finish -= 1) == 1
+    end
+  end
+  n = 0
+  n_val = lambda { n = n + 2 }
+  top,bot = work.call(2,[1,n_val,1],100)
+  top.to_s.split(//).map(&:to_i).reduce(&:+)
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_64
+  p problem_65
 end
 
