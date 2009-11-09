@@ -540,8 +540,8 @@ end
 def problem_64
   odd,max = 0,0
   (2..10_000).each do |num|
-    next unless r = num.sqrt_seq(num)
-    puts "#{num} => #{r.length}"
+    next unless r = num.sqrt_seq
+    puts "#{num} => #{r.inspect}"
     max = [max,r.length].max
     odd += 1 if r.length.odd?
   end
@@ -550,12 +550,13 @@ def problem_64
 end
 
 def problem_65
+  # Move to groupings.rb?
   work = lambda do |start,seq,finish|
     ltop,lbot,top,bot = 1, 0, start, 1
     seq.cycle do |v|
       v = v.call if v.is_a? Proc
       ltop,lbot,top,bot = top,bot, ltop + top * v, lbot + bot * v
-      # puts "#{top} / #{bot}"
+      puts "#{top} / #{bot}"
       return [top,bot] if (finish -= 1) == 1
     end
   end
@@ -565,11 +566,87 @@ def problem_65
   top.to_s.split(//).map(&:to_i).reduce(&:+)
 end
 
+# 1766319049^2 - 61 * 226153980^2 == 1
+# x*x - d*y*y == 1
+# (x*x-1) % d == 0
+def diophantine_solve(d)
+    return nil if Math.sqrt(d).to_i ** 2 == d
+    num = 0
+    upto = 100_000_000
+    df = d.factors.last
+    x = df
+    loop do
+#      puts "x -> #{x} df -> #{df}"
+      xxp = (x+1)**2
+      xxn = (x-1)**2
+
+      [xxp,xxn].each do |xxv| 
+#       puts "try => #{xxv}"
+#        xxv = xv**2 - 1
+        dd = xxv % d
+        if dd == 1 || dd == (d-1)
+#          puts "A"
+          yyv = (xxv-1) / d
+          y = Math.sqrt(yyv).to_i
+          if y * y == yyv
+#            puts "(#{Math.sqrt(xxv).to_i},#{d},#{y})"
+            x = Math.sqrt(xxv).to_i
+            return [x,d,y]
+          end
+        end
+      end
+      x += df
+      if x > upto
+        puts x
+        upto += 100_000_000
+      end
+    end
+    [x,d,y]
+  end
+
+def problem_66_bad
+  max = 0
+  (2..1000).each do |d|
+    next unless r = diophantine_solve(d)
+    max = [max,r[0]].max
+    puts "#{r[0]}^2 - #{r[1]} * #{r[2]}^2 == 1"
+    df = d.factors.last
+    xnf = (r[0]-1).factors.index df
+    xpf = (r[0]+1).factors.index df
+    puts "BAD" unless xnf || xpf
+#    puts "df = #{df} #{xnf ? 'hit' : 'miss'} #{xpf ? 'hit' : 'miss'}"
+  end
+  max
+end
+
+# This one was tough.  A trial search does not work, it takes way to long
+# on some terms.  The thing to remember is that
+# x*x - d*y*y == 1
+# x*x -1 == d*y*y
+# (x*x-1)/y*y == d
+# x/y =~ sqrt(d) The sqrt(d) will be slightly larger than the solution,
+# so as the fraction converges, we will end up with the correct value.
+# We can use the solution code for problem_64/problem_65 to solve this one.
+# problem_64 gives us the fraction sequence for the irrational and
+# problem_65 gives us the fraction as we improve the precision.
+# Now because of the sqrt(x*x-1), we are not actually after the sqrt, the
+# sequence will stop with the solution earlier than that.
+def problem_66
+  max = [0,0]
+  (2..1000).each do |d|
+    top,bot = d.sqrt_frac {|t,b| (t*t - d*b*b) == 1}
+    next unless top
+    max = [max,[top,d]].max
+    puts "#{d} #{top} #{bot}"
+  end
+  max[1]
+end
+
 def problem_67
   problem_18(open("triangle.txt").read.split(/\s+/).map(&:to_i))
 end
 
 if __FILE__ == $0
-  p problem_65
+  p problem_66
 end
 

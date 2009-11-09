@@ -77,13 +77,15 @@ class Integer
     start.uniq
   end
 
-  def sqrt_seq(n)
-    sqrt = Math.sqrt(n.to_f).floor.to_i
+  # Return the fractional sequence for square root.  The initial
+  # integer is not present
+  def sqrt_seq
+    sqrt = Math.sqrt(self.to_f).floor.to_i
     top,bot = 1,-sqrt
     out = []
     loop do
       new_top = -bot
-      new_bot = (n - (bot * bot)) / top
+      new_bot = (self - (bot * bot)) / top
       break nil if new_bot == 0
       digit = (new_top + sqrt) / new_bot
       new_top -= digit * new_bot
@@ -91,6 +93,28 @@ class Integer
       top,bot = new_bot,new_top
       return out if top == 1 && bot == -sqrt
     end
+  end
+
+  # If num is given, return the fraction after that number of
+  # interations.  Yields each resolution of the fraction.
+  # Always return [top,bottom]
+  def sqrt_frac(num = nil,&block)
+    work = lambda do |start,seq,finish|
+      ltop,lbot,top,bot = 1, 0, start, 1
+      seq.cycle do |v|
+        v = v.call if v.is_a? Proc
+        ltop,lbot,top,bot = top,bot, ltop + top * v, lbot + bot * v
+        if block
+          return [top,bot] if block.call(top,bot)
+        else
+          return [top,bot] if (finish -= 1) <= 1
+        end
+      end
+    end
+    r = self.sqrt_seq
+    return nil unless r
+    num ||= r.length
+    work.call(Math.sqrt(self).to_i,r,num)
   end
 end
 
