@@ -54,7 +54,20 @@ def problem_68
   ans.map(&:to_i).sort.last
 end
 
+# Actually very simple, the number with the most prime factors <= 1e6.
+# 510510
+def problem_69
+  n = 1
+  Primes.each do |p|
+    nn = n * p
+    puts p
+    break if nn > 1_000_000
+    n = nn
+  end
+  n
+end
+
 if __FILE__ == $0
-  p problem_68
+  p problem_69
 end
 
