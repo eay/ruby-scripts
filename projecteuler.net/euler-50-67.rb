@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env ruby1.9
 # Taken from http://projecteuler.net
 require 'primes.rb'
 require 'groupings.rb'
@@ -545,12 +545,12 @@ def problem_64
     loop do
       new_top = -bot
       new_bot = (n - (bot * bot)) / top
-      return nil if new_bot == 0
+      break nil if new_bot == 0
       digit = (new_top + sqrt) / new_bot
       new_top -= digit * new_bot
       out << digit
       top,bot = new_bot,new_top
-      return out if top == 1 && bot == -sqrt
+      break out if top == 1 && bot == -sqrt
     end
   end
 
