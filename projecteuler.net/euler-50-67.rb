@@ -538,24 +538,31 @@ def problem_63
 end
 
 def problem_64
-  sqrt = lambda do |n|
-    f = Math.sqrt(n.to_f).floor.to_i
-    out = [f]
+  sqrt_seq = lambda do |n|
+    sqrt = Math.sqrt(n.to_f).floor.to_i
+    top,bot = 1,-sqrt
+    out = []
     loop do
-      top,bottom = f, n - f*f
-      t = (f + d)
-      out << t / d
-      t - out.last * d
-      return out if out.length > 10
+      new_top = -bot
+      new_bot = (n - (bot * bot)) / top
+      return nil if new_bot == 0
+      digit = (new_top + sqrt) / new_bot
+      new_top -= digit * new_bot
+      out << digit
+      top,bot = new_bot,new_top
+      return out if top == 1 && bot == -sqrt
     end
   end
 
-  p  sqrt.call 23
-  return
+  odd,max = 0,0
   (2..10_000).each do |num|
-    p  sqrt.call num.to_f
-    next if sq.to_i ** 2 == num
+    next unless r = sqrt_seq.call(num)
+    puts "#{num} => #{r.length}"
+    max = [max,r.length].max
+    odd += 1 if r.length.odd?
   end
+  puts "max => #{max}"
+  odd
 end
 
 def problem_67
