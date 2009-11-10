@@ -196,9 +196,11 @@ class Integer
 
   # Return Euler's totient, or the number of number of positive integers
   # less than or equal to n that are co-prime.  The order of the number.
-  def totient
+  # We can pass in the factors to speed things up
+  def totient(*fact)
+    fact = self.factors if fact.empty?
     n = self
-    self.factors.uniq.sort.each do |f|
+    fact.uniq.each do |f|
       n = n*(f-1)/f
     end
     n
