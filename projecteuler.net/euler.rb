@@ -209,7 +209,81 @@ def problem_70
   min
 end
 
+# A variant on problem 39, this is the brute force system.  It is not
+# the correct way to do things, but it works.
+def problem_75a
+  num = 0
+  12.upto(1_500_000) do |p|
+    hit = false
+    a,b = p/2,1
+    while (a > b)
+      aabb = a*a + b*b
+      cc = (p - a - b)**2
+      if cc <= aabb
+        if cc == aabb #puts "#{a} #{b} #{c}"
+          if hit
+            break
+          else
+            hit = true
+          end
+        end
+        a -= 1
+      else # cc > aabb
+        b += 1
+      end
+    end
+    num +=1 if hit
+    puts "#{p}" if hit
+  end
+  num
+end
+
+# It appears that the correct solution is to use ratios of 3,4,5
+# For m > n
+# a = m**2 - n**2
+# b = 2*m*n
+# c = m**2 + n**2
+# Now to get all elements, also multipy a,b,c by k
+def problem_75
+  p3 = lambda do |m,n|
+    raise "bad value" if m == n
+    m,n = n,m if m < n
+    mm = m*m
+    nn = n*n
+    [mm - nn, 2*m*n, mm + nn]
+  end
+
+  max = 1_500_000
+  upto = Math.sqrt(max/2).to_i
+#  upto = max
+  hits = Hash.new
+
+  (1..upto).each do |x|
+    hit = 0
+    ((x+1)..(upto+1)).each do |y|
+      a,b,c = p3.call(x,y).sort
+      d = a+b+c
+      if d <= max
+        k = 1
+        begin
+          hits[d*k] ||= {}
+          hits[d*k][[a*k,b*k,c*k].sort.join("-")] = true
+          hit += 1
+          k += 1
+        end while d*k <= max
+      else
+        break
+      end
+    end
+    puts "for x = #{x}, #{hit} hits"
+  end
+  puts hits.length
+  h = hits.select {|k,v| v.length == 1}
+  puts h.length
+  h.length
+end
+
 if __FILE__ == $0
-  p problem_70
+  p problem_75
 end
 
