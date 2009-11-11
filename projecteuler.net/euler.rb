@@ -260,7 +260,9 @@ def problem_75
 
   (1..upto).each do |x|
     hit = 0
+    y = x + 1
     ((x+1)..(upto+1)).each do |y|
+      next unless (x+y).odd?
       a,b,c = p3.call(x,y).sort
       d = a+b+c
       if d <= max

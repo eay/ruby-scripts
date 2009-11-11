@@ -205,6 +205,22 @@ class Integer
     end
     n
   end
+
+  # Greatest common divisor
+  def gcd(num)
+    if num == 0
+      self
+    else
+      num.gcd(self - num * (self/num))
+    end
+  end
+  alias gcf gcd # aka greatest common factor
+  alias hcf gcd # aka highest common factor
+
+  # Least common multiple
+  def lcm(num)
+    self * num / self.gcd(num)
+  end
 end
 
 class Array
