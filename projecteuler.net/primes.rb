@@ -243,17 +243,14 @@ class Integer
     gcd(num).first_factor
   end
 
+  # Picked up the algorithm from 
+  # http://en.wikipedia.org/wiki/Farey_sequence
   def farey(start = [0,1], finish = [1,1])
     n = self
-    if start[0] < finish[1]
-      asc = true
-      a,b,c,d = start[0],start[1],1,self
-    else
-      asc = false
-      a,b,c,d = finish[0],finish[1],n-1,self
-    end
+    a,b = start
+    c,d = 1,n
     yield [a,b] if block_given?
-    while (asc && (c < n)) || (!asc && (a > 0))
+    while c < n
       k = (n+b)/d
       a,b,c,d = c, d, k*c - a, k*d - b
       yield [a,b] if block_given?
