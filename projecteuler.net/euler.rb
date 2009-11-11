@@ -247,6 +247,36 @@ def problem_72
   end
 end
 
+# Given the points a/b and c/d, the median point is p/q = (a+c)/(b+d)
+# We can keep on applying this rule until q > 12000.  Do left/right
+# searches
+def problem_73
+  max = 12_000
+
+  median = lambda do |a,b|
+    p,q = a[0] + b[0], a[1]+b[1]
+    if (g = p.gcd(q)) != 1
+      p,q = p/g,q/g
+    end
+    [p,q]
+  end
+  search = lambda do |a,b|
+    m = median.call(a,b)
+    p m
+    return 0 if m[1] > max
+#    if m[1] <= max
+      r = 1 + search.call(a,m)
+      r += search.call(m,b)
+#    else
+#      p m
+#      r = 1
+#    end
+    r
+  end
+
+  search.call([1,3],[1,2])
+end
+
 # A variant on problem 39, this is the brute force system.  It is not
 # the correct way to do things, but it works.
 def problem_75a
@@ -324,6 +354,6 @@ def problem_75
 end
 
 if __FILE__ == $0
-  p problem_72
+  p problem_73
 end
 
