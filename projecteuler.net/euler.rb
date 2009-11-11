@@ -209,6 +209,32 @@ def problem_70
   min
 end
 
+# Quite simple, start with the biggest allowable fraction
+# and then solve for (n+1)/d == 3/7
+# 7*n +1 == 3*d
+def problem_71
+  d = 1_000_000
+  num = 3
+  div = 7
+  n = d * num / div
+  loop do
+    puts "#{n} / #{d}"
+    diff = (div * n + 1) - num * d
+    if diff > 0 # n is too big
+      n -= 1
+    elsif diff == 0
+      puts "HIT"
+      while (g = n.gcd(d)) != 1
+        n,d = n/g, d/g
+      end
+      return [n,d]
+    else # d is too big
+      d -= 1
+    end
+    break if n == 0 # Does this ever happen?
+  end
+end
+
 # A variant on problem 39, this is the brute force system.  It is not
 # the correct way to do things, but it works.
 def problem_75a
@@ -286,6 +312,6 @@ def problem_75
 end
 
 if __FILE__ == $0
-  p problem_75
+  p problem_71
 end
 
