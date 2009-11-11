@@ -235,6 +235,18 @@ def problem_71
   end
 end
 
+# Brute force - 180sec.  Rather ugly, there must be a better way.
+# ruby1.8  11m33s
+# jruby1.4  3m45s
+# ruby1.9   3m00s
+# 303963552391
+def problem_72
+  (2..1_000_000).reduce do |a,n|
+    puts "#{n} => #{a}" if n % 1000 == 0
+    a + n.totient
+  end
+end
+
 # A variant on problem 39, this is the brute force system.  It is not
 # the correct way to do things, but it works.
 def problem_75a
@@ -312,6 +324,6 @@ def problem_75
 end
 
 if __FILE__ == $0
-  p problem_71
+  p problem_72
 end
 

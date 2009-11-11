@@ -71,6 +71,10 @@ class Primes
     @@primes.factors(num)
   end
 
+  def self.first_factor(num)
+    @@primes.first_factor(num)
+  end
+
   def self.factors_old(num)
     @@primes.factors_old(num)
   end
@@ -139,6 +143,14 @@ class Primes
     fac << num
   end
 
+  def first_factor(num)
+    sq = Math.sqrt(num).to_i
+    each do |p|
+      return p if num % p == 0 || p > sq
+    end
+    # We should never get here
+  end
+
   # Check if a number is prime by trying to find factors.
   # This method only needs the primes upto sqrt(num).  So for big
   # primes, this is the way to go.
@@ -172,6 +184,10 @@ class Integer
 
   def factors
     Primes.factors(self)
+  end
+
+  def first_factor
+    Primes.first_factor(self)
   end
 
   def factors_old
@@ -219,7 +235,12 @@ class Integer
 
   # Least common multiple
   def lcm(num)
-    self * num / self.gcd(num)
+    (self * num).abs / gcd(num)
+  end
+
+  # least common divisor
+  def lcd(num)
+    gcd(num).first_factor
   end
 end
 
