@@ -240,8 +240,8 @@ end
 # jruby1.4  3m45s
 # ruby1.9   3m00s
 # 303963552391
-def problem_72
-  (2..1_000_000).reduce do |a,n|
+def problem_72(num = 1_000_000)
+  (2..num).reduce do |a,n|
     puts "#{n} => #{a}" if n % 1000 == 0
     a + n.totient
   end
@@ -250,31 +250,27 @@ end
 # Given the points a/b and c/d, the median point is p/q = (a+c)/(b+d)
 # We can keep on applying this rule until q > 12000.  Do left/right
 # searches
+# -----
+# Picked up the algorithm from 
+# http://en.wikipedia.org/wiki/Farey_sequence
+# I need to fully understand it before moving on.
 def problem_73
-  max = 12_000
-
-  median = lambda do |a,b|
-    p,q = a[0] + b[0], a[1]+b[1]
-    if (g = p.gcd(q)) != 1
-      p,q = p/g,q/g
+  max = 12000
+  n,m = 0,0
+  doit = false
+  max.farey do |a,b|
+    case 
+    when a == 1 && b == 3
+      doit = true
+      puts "start"
+    when a == 1 && b == 2
+      return n
+    else
+      n += 1 if doit
+      m += 1
     end
-    [p,q]
+    puts m if m % 100000 == 0
   end
-  search = lambda do |a,b|
-    m = median.call(a,b)
-    p m
-    return 0 if m[1] > max
-#    if m[1] <= max
-      r = 1 + search.call(a,m)
-      r += search.call(m,b)
-#    else
-#      p m
-#      r = 1
-#    end
-    r
-  end
-
-  search.call([1,3],[1,2])
 end
 
 # A variant on problem 39, this is the brute force system.  It is not
