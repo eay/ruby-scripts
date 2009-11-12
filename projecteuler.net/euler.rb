@@ -253,24 +253,45 @@ end
 # -----
 # Picked up the algorithm from 
 # http://en.wikipedia.org/wiki/Farey_sequence
-# I need to fully understand it before moving on.
+# I now understand the farey function and have changed it so it can
+# start and end at arbitary fractions
 def problem_73
   max = 12000
-  n,m = 0,0
-  doit = false
-  max.farey do |a,b|
-    case 
-    when a == 1 && b == 3
-      doit = true
-      puts "start"
-    when a == 1 && b == 2
-      return n
-    else
-      n += 1 if doit
-      m += 1
-    end
-    puts m if m % 100000 == 0
+  num = 0
+  max.farey([1,3],[1,2]) do |a,b|
+      num += 1
+      puts "#{num} => #{a}/#{b}" if num % 100_000 == 0
   end
+  num -= 2 # Drop the endpoints
+end
+
+def problem_74
+  fac = (0..9).map {|n| n.factorial}
+  seen = {
+    1454 => 3,   169 => 3, 363601 => 3,
+     871 => 2, 45361 => 2, 
+     145 => 1
+     }
+  total = 0
+  (10..1_000_000).each do |number|
+    n = number
+    run = []
+    until len = seen[n] do
+      seen[n] = -1
+      run << n
+      n = n.to_s.split(//).reduce(0) {|a,d| a + fac[d.to_i]}
+#      puts ">>#{run.length} #{run.inspect}"
+    end
+    # We have now entered a loop
+    len += run.length
+#    puts "#{n} => #{len} #{run.inspect}"
+    run.reverse.each_index {|i| seen[run[i]] = len - i }
+    if len >= 60
+      puts "#{number}  => #{len}" 
+      total += 1
+    end
+  end
+  total
 end
 
 # A variant on problem 39, this is the brute force system.  It is not
@@ -350,6 +371,6 @@ def problem_75
 end
 
 if __FILE__ == $0
-  p problem_73
+  p problem_74
 end
 
