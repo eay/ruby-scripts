@@ -39,13 +39,13 @@ class Integer
   end
 
   # return all groupings of n elements
-  # If n in 4,
+  # If n is 4,
   # [1,1,1,1]
   # [2,1,1]
   # [3,1]
   # [4]
   # [2,2]
-  def groupings
+  def groupings_old
     start = [[1]]
     (2..self).each do |n|
       r = []
@@ -75,6 +75,24 @@ class Integer
     end
     # We get some duplicates
     start.uniq
+  end
+
+  # New version, does yields, much more efficent, good to use
+  # recursion :-)
+  def groupings
+    solve = lambda do |a,off,max|
+      if (a.length - off) > 1
+        while a[off] < max && (a.length-off) >= 2 
+          a[off] += a.pop
+          yield a
+          solve.call(a.dup,off+1,a[off])
+        end
+      end
+    end
+
+    start = [1] * self
+    yield start
+    solve.call(start, 0, self-1)
   end
 
   # Return the fractional sequence for square root.  The initial
