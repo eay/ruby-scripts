@@ -265,8 +265,13 @@ def problem_73
   num -= 2 # Drop the endpoints
 end
 
+# Initial version was 82sec
+# The improve the to_digits and allow 'fac' lookup on ascii values.
+# Now takes 21sec
 def problem_74
   fac = (0..9).map {|n| n.factorial}
+  (0..9).each { |n| fac[n + ?0.ord] = fac[n] }
+
   seen = {
     1454 => 3,   169 => 3, 363601 => 3,
      871 => 2, 45361 => 2, 
@@ -279,7 +284,9 @@ def problem_74
     until len = seen[n] do
       seen[n] = -1
       run << n
-      n = n.to_s.split(//).reduce(0) {|a,d| a + fac[d.to_i]}
+      #n = n.to_digits.reduce(0) {|a,d| a + fac[d.to_i]}
+      n = n.to_s.unpack("C*").reduce(0) {|a,d| a + fac[d]} # 21sec
+#      n = n.to_digits.reduce(0) {|a,d| a + fac[d]}  # 21sec
 #      puts ">>#{run.length} #{run.inspect}"
     end
     # We have now entered a loop
