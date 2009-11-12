@@ -9,6 +9,8 @@ if RUBY_VERSION < "1.8.7"
   end
 end
 
+require 'rational'
+
 class Primes
   include Enumerable
 
@@ -245,18 +247,46 @@ class Integer
 
   # Picked up the algorithm from 
   # http://en.wikipedia.org/wiki/Farey_sequence
-  def farey(start = [0,1], finish = [1,1])
+  # It steps through all the reduced proper factions
+  # between the 2 passed factions.  The denominator maximun is self.
+  def farey(p1 = [0,1],p2 = [1,1])
     n = self
-    a,b = start
-    c,d = 1,n
+    # a,b is the start point, c,d needs to be the next point.
+    a,b = p1
+    # Make sure it is a reduce proper fraction.  We can do this with gcf,
+    # but lets just use rational
+    r = Rational(a,b)
+    a,b = r.numerator,r.denominator
+    # First, we get an approximation of the start point
+    c,d = a*n/b,n
+    if c * b == n
+      # If we are an exact match, make the denominator one smaller,
+      # just a little bit bigger
+      d -= 1 
+    else
+      # else we are just under, so make the numerator one bigger
+      c += 1
+    end
+    # Again, make sure the endpoint is a reduced proper fraction
+    r = Rational(*p2)
+    p2 = [r.numerator,r.denominator]
+ 
     yield [a,b] if block_given?
-    while c < n
+    while [a,b] != p2 # || c < n this exits at 1/1
+      # Given 2 points, we determin the next one.
+      # Given three points in sequence
+      # [a,b] [c,d] [e,f]
+      # [c,d] == [a+e,b+f]
+      # [e,f] == [kc-a.kd-b] where k = (n+b)/d
+      # I'm still not fully over the k calculation, but it works.
+      # The k value does the 'reduced proper fraction' part.
+      # For the new d value, we are doing (n+b)/d*d, so it is a multiple of d.
+      # The new c is (n+b)/d*c, so the same .... thinking still....
       k = (n+b)/d
       a,b,c,d = c, d, k*c - a, k*d - b
       yield [a,b] if block_given?
     end
   end
-
 end
 
 class Array
