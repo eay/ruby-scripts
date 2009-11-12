@@ -81,18 +81,16 @@ class Integer
   # recursion :-)
   def groupings
     solve = lambda do |a,off,max|
-      if (a.length - off) > 1
-        while a[off] < max && (a.length-off) >= 2 
-          a[off] += a.pop
-          yield a
-          solve.call(a.dup,off+1,a[off])
-        end
+      while a[off] < max && (a.length-off) >= 2 
+        a[off] += a.pop
+        return unless yield a
+        solve.call(a.dup,off+1,a[off]) if a.length - off > 1
       end
     end
 
     start = [1] * self
     yield start
-    solve.call(start, 0, self-1)
+    solve.call(start, 0, self-1) if self > 1
   end
 
   # Return the fractional sequence for square root.  The initial
