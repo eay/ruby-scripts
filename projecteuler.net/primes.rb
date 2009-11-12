@@ -180,6 +180,21 @@ class Integer
     (1..self).reduce(1) {|a,n| a*n}
   end
 
+  # Break a number into it's digits
+  def to_digits
+#    self.to_s.split(//)                       84sec
+#    self.to_s.unpack("C*").map {|b| b - 48 }  26sec
+#    self.to_s.bytes.map {|b| b - 48 }         29sec
+#    The below code takes                      21sec
+    r = []
+    n = self
+    while n > 0
+      r << n % 10
+      n /= 10
+    end
+    r.reverse
+  end
+
   def prime?
     Primes.prime?(self)
   end
