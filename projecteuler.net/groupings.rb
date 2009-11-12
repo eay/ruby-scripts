@@ -78,7 +78,7 @@ class Integer
   end
 
   # New version, does yields, much more efficent, good to use
-  # recursion :-)
+  # recursion :-).  yield must return true or we bail.
   def groupings
     solve = lambda do |a,off,max|
       while a[off] < max && (a.length-off) >= 2 
