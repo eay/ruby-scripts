@@ -21,31 +21,10 @@ def problem_76a
   puts 1 + solve.call([1] * num, 0,num-1)
 end
 
-# Wrong answer, but 1m20s
+# 0.05 seconds, the secret is caching :-)
+# For 100, we cache 4851 values
 def problem_76
-  # num is the value we want and
-  # off is the index in primes to use next
-  hits = 0
-  solve = lambda do |num, p|
-    return 1 if p == 1
-    return 0 if num <= 1
-    ret = 0
-    ret += 1 if num % p == 0
-    n = num / p
-    ret += solve.call(num,p-1) if p > 1 #&& num != p
-    left = num
-    1.upto(n) do
-      left -= p
-      if p == 2
-        ret += 1
-      else
-        ret += solve.call(left,p-1)
-      end
-    end
-    ret
-  end
-
-  solve.call(100,100)
+  return 100.pile_count - 1
 end
 
 # Brute force again - 4min

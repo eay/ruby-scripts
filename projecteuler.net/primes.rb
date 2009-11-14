@@ -264,6 +264,7 @@ class Integer
   # http://en.wikipedia.org/wiki/Farey_sequence
   # It steps through all the reduced proper factions
   # between the 2 passed factions.  The denominator maximun is self.
+  # Returns the number of elements, yields each point
   def farey(p1 = [0,1],p2 = [1,1])
     n = self
     # a,b is the start point, c,d needs to be the next point.
@@ -286,6 +287,7 @@ class Integer
     r = Rational(*p2)
     p2 = [r.numerator,r.denominator]
  
+    count = 1
     yield [a,b] if block_given?
     while [a,b] != p2 # || c < n this exits at 1/1
       # Given 2 points, we determin the next one.
@@ -299,7 +301,41 @@ class Integer
       # The new c is (n+b)/d*c, so the same .... thinking still....
       k = (n+b)/d
       a,b,c,d = c, d, k*c - a, k*d - b
+      count += 1
       yield [a,b] if block_given?
+    end
+  count
+  end
+
+  # It is a simple algorithm, to count the number of possible piles we can
+  # divide into.
+  # p(n,k)
+  #   return 1 if k == 1 || n == k
+  #   return 0 if k > n
+  #   return p(n-1,k-1) + p(n-k,k)
+  #
+  # sum = 0
+  # 1..target do |n|
+  #   sum += p(target,n)
+  #
+  #  The way to make it fast is to cache the return values from
+  #  p(n,k).
+  def pile_count(cache = {})
+    count = lambda do |n,k|
+      s = "#{n} #{k}"
+      if v = cache[s]
+        return v
+      end
+      #puts "#{n} #{k}"
+      return 1 if k == 1 || n == k
+      return 0 if k > n
+      r = count.call(n-1,k-1) + count.call(n-k,k)
+      cache["#{n} #{k}"] = r
+  #    puts "#{cache.length} => #{r}"
+      r
+    end
+    (1..self).reduce(0) do |a,k|
+      a + count.call(self,k)
     end
   end
 end
