@@ -127,7 +127,48 @@ def problem_78
   p
 end
 
+def problem_79
+  a = []
+  open("keylog.txt").each {|l| a << l.split(//).map(&:to_i) }
+  puts a.length
+end
+
+# Quite simple, just generate the fraction to a good level, then
+# add the digits.  # Use code developed in question_66
+# 100 digits    0.07sec   40886
+# 1000 digits   1.23sec  405200
+# 10000 digits 35.36sec 4048597
+#
+# Some-ones solution using ruby libraries
+if false
+  require 'bigdecimal'
+  size = 1000 
+  puts((1..100).inject(0) do |sum,num|
+    if !(Math.sqrt(num)%1==0)
+      digits = BigDecimal.new(num.to_s).sqrt(size).to_s[2,size]
+      sum += digits.split(//).inject(0) do |digsum,n|
+        digsum + n.to_i
+      end
+    end
+    sum
+  end)
+end
+
+def problem_80
+  size = 100
+  total = 0
+  (2..100).each do |n|
+    n,d = n.sqrt_frac(2*size)
+    next unless n
+    r = n * (10 ** (size * 1.1).to_i) / d
+    r = r.to_s[0,size].split(//).map(&:to_i).reduce(&:+)
+    total += r
+    puts r.inspect
+  end
+  total
+end
+
 if __FILE__ == $0
-  p problem_78
+  p problem_80
 end
 
