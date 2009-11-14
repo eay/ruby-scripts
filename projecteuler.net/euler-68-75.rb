@@ -258,11 +258,12 @@ end
 def problem_73
   max = 12000
   num = 0
-  max.farey([1,3],[1,2]) do |a,b|
-      num += 1
-      puts "#{num} => #{a}/#{b}" if num % 100_000 == 0
-  end
-  num -= 2 # Drop the endpoints
+  #max.farey([1,3],[1,2]) do |a,b|
+  #    num += 1
+  #    puts "#{num} => #{a}/#{b}" if num % 100_000 == 0
+  #end
+  #num -= 2 # Drop the endpoints
+  max.farey([1,3],[1,2]) - 2
 end
 
 # Initial version was 82sec
@@ -378,6 +379,6 @@ def problem_75
 end
 
 if __FILE__ == $0
-  p problem_74
+  p problem_73
 end
 
