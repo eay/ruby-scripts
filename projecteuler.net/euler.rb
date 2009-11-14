@@ -23,8 +23,9 @@ end
 
 # 0.05 seconds, the secret is caching :-)
 # For 100, we cache 4851 values
+# http://mathworld.wolfram.com/PartitionFunctionP.html
 def problem_76
-  return 100.pile_count - 1
+  return 100.partitions - 1
 end
 
 # Brute force again - 4min
@@ -43,8 +44,7 @@ def problem_77a
     n
   end
   m = 0
- # (2..100).each do |num|
-  (30..30).each do |num|
+  (2..100).each do |num|
     break if (m = solve.call([1] * num,0,num-1)) > 5000
     puts "#{num} => #{m}"
   end
@@ -89,7 +89,45 @@ def problem_77
   end
 end
 
+# hmm... ugly, needed the generator from
+# http://en.wikipedia.org/wiki/Partition_(number_theory)
+# runtime is about 6 sec.
+# The trick is to cache the previous values so the sumation is quick.
+# A bit of a weird generator function.
+def problem_78
+  n = 1
+  p_cache = [1]
+
+  generate = lambda do |k|
+    ret = 0
+    sign = 0
+    Integer.generalized_pentagonals do |gp|
+      if k < gp
+        false # Need to exit ruby1.8, can't break...
+      else
+        if sign >= 0
+          ret += p_cache[k-gp]
+        else
+          ret -= p_cache[k-gp]
+        end
+        sign += (sign == 1) ? -3 : 1 # 4 states + + - -
+      end
+    end
+    p_cache[k] = ret % 100_000_000
+    ret
+  end
+
+  p = 1
+  loop do
+    r =  generate.call(p)
+#    puts "#{p} #{generate.call(p)}"
+    break if r % 1_000_000 == 0
+    p += 1
+  end
+  p
+end
+
 if __FILE__ == $0
-  p problem_77
+  p problem_78
 end
 
