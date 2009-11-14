@@ -307,6 +307,27 @@ class Integer
   count
   end
 
+  def pentagonal
+    self * (3 * self -1) / 2
+  end
+
+  def self.pentagonals
+    i = 1
+    loop do
+      yield i.pentagonal
+      i += 1
+    end
+  end
+
+  def self.generalized_pentagonals
+    i = 1
+    loop do
+      break unless yield i.pentagonal
+      break unless yield((-i).pentagonal)
+      i += 1
+    end
+  end
+
   # It is a simple algorithm, to count the number of possible piles we can
   # divide into.
   # p(n,k)
@@ -320,7 +341,7 @@ class Integer
   #
   #  The way to make it fast is to cache the return values from
   #  p(n,k).
-  def pile_count(cache = {})
+  def partitions_a(cache = {})
     count = lambda do |n,k|
       s = "#{n} #{k}"
       if v = cache[s]
@@ -337,6 +358,48 @@ class Integer
     (1..self).reduce(0) do |a,k|
       a + count.call(self,k)
     end
+  end
+
+  # A bit over 2 times faster, cache better
+  # cache[n-k] if n <= k*2 
+  # http://en.wikipedia.org/wiki/Partition_(number_theory)
+  def partitions(cache = {})
+
+    count = lambda do |n,k|
+      return 1 if n == k || k == 1
+
+      if n <= k*2
+        s = n-k
+      else
+        s = "#{n} #{k}"
+      end
+      if v = cache[s]
+        return v
+      end
+
+      if k == 2
+        r = 1
+      else
+      #  puts "miss #{n-1} #{k-1}" unless cache["#{n-1} #{k-1}"]
+        r = count.call(n-1,k-1)
+      end
+      r += count.call(n-k,k) unless k+k > n # Only call with n >= k
+
+      cache[s] = r unless k == 2
+      r
+    end
+
+    # Half the calls are cached
+    r = (1..self).reduce(0) do |a,k|
+      a + count.call(self,k)
+    end
+
+    sum = 0
+    (1..(self/2)).each do |k|
+      sum += 1 + count.call(self-k,k)
+    end
+    puts "#{r - sum}"
+    r
   end
 end
 
