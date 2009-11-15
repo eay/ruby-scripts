@@ -140,10 +140,9 @@ end
 # 10000 digits 35.36sec 4048597
 #
 # Some-ones solution using ruby libraries
-if false
+def problem_80a(size = 100)
   require 'bigdecimal'
-  size = 1000 
-  puts((1..100).inject(0) do |sum,num|
+  ((1..100).inject(0) do |sum,num|
     if !(Math.sqrt(num)%1==0)
       digits = BigDecimal.new(num.to_s).sqrt(size).to_s[2,size]
       sum += digits.split(//).inject(0) do |digsum,n|
@@ -154,8 +153,8 @@ if false
   end)
 end
 
-def problem_80
-  size = 100
+# Using problem_66 continious fractions
+def problem_80(size = 100)
   total = 0
   (2..100).each do |n|
     n,d = n.sqrt_frac(2*size)
@@ -163,12 +162,27 @@ def problem_80
     r = n * (10 ** (size * 1.1).to_i) / d
     r = r.to_s[0,size].split(//).map(&:to_i).reduce(&:+)
     total += r
-    puts r.inspect
+#    puts r.inspect
+  end
+  total
+end
+
+# Using base 10 sqrt
+def problem_80b(size = 100)
+  total = 0
+  (2..100).each do |n|
+    r = n.sqrt_digits(size+1)
+    next if r.length == 1
+    r = r[0,size].reduce(&:+)
+    total += r
+#    puts "#{n} #{r.inspect}"
   end
   total
 end
 
 if __FILE__ == $0
-  p problem_80
+#  p problem_80(10000)
+#  p problem_80a(10000)
+  p problem_80b(10000)
 end
 
