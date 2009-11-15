@@ -132,12 +132,55 @@ class Integer
     num ||= r.length
     work.call(Math.sqrt(self).to_i,r,num)
   end
+
+  # decimal (base 10) sqrt, returns [numerator,decimal1, decimal2,...] given
+  # the whole number and decimal parts
+  # http://en.wikipedia.org/wiki/Methods_of_computing_square_roots#Digit_by_digit_calculation
+  def sqrt_digits(digits = 10)
+    num = self.to_s
+    num = "0" + num if num.length.odd?
+#    dec = dec.to_s
+#    dec += "0" if dec.length.odd?
+#    pairs = (num + dec)
+    pairs = num
+    pairs = pairs.split(//).each_slice(2).map {|a,b| a.to_i * 10 + b.to_i }
+
+    p = 0
+    c = 0
+    len = 0
+    begin
+      c = c * 100 + (pairs.shift || 0)
+      if p == 0
+        x,y = 1,1
+      else
+        x = c / (20 * p)
+        if (y = (20*p+x)*x) > c
+          while (yy = (20*p+(x-1))*(x-1)) > c
+            x -= 1
+            y = yy
+          end
+        else
+          while (yy = (20*p+(x+1))*(x+1)) < c
+            x += 1
+            y = yy
+          end
+        end
+      end
+      p = p * 10 + x
+      len += 1
+      c -= y
+      break if len >= digits
+    end until c == 0 && pairs.length == 0
+    r = p.to_s
+    n = r[0,num.length/2].to_i
+    d = r[num.length/2,r.length].gsub(/0+$/,"").split(//).map(&:to_i)
+    d.unshift n
+  end
+
 end
 
 
 
 if __FILE__ == $0
-  7.groupings.each do |a|
-    p a
-  end
+  2.sqrt_digits
 end
