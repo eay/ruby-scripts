@@ -127,10 +127,10 @@ def problem_78
   p
 end
 
-# Quite simple, grab the first elements of the input tripples,
+# Quite simple, grab the first elements of the input triples,
 # then remove any that appear in the second place.
 # If there is only one, then that number is output, removed from any
-# tripples with it as their first element (which is must be; the remaining
+# triples with it as their first element (which is must be; the remaining
 # elements are shuffled up). Repeat.
 # If there were 2 valid values, the algorithm needs to be re-worked.
 # 73162890
