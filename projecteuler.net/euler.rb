@@ -127,10 +127,38 @@ def problem_78
   p
 end
 
+# Quite simple, grab the first elements of the input tripples,
+# then remove any that appear in the second place.
+# If there is only one, then that number is output, removed from any
+# tripples with it as their first element (which is must be; the remaining
+# elements are shuffled up). Repeat.
+# If there were 2 valid values, the algorithm needs to be re-worked.
+# 73162890
+#
+# Another algorithm is to collect all second digits, none can be in the
+# first list, use this to work out the string
 def problem_79
-  a = []
-  open("keylog.txt").each {|l| a << l.split(//).map(&:to_i) }
-  puts a.length
+  digits = []
+  lines = open("keylog.txt").reduce([]) do |a,l|
+    a << l.chomp.split(//).map(&:to_i)
+  end
+  p = lines.transpose
+  loop do 
+    first = (p[0] - p[1]).uniq
+    if first.length == 1
+      d = first[0]
+      digits << d 
+      puts "Remove #{d}"
+      # shift off leading 'd' values
+      lines.select {|l| l[0] == d}.map {|l| l.shift; l.push nil }
+      # Rebuild out first, second, third arrays
+      p = lines.transpose
+      return digits.map(&:to_s).join if p.flatten.compact.length == 0
+      puts "len = #{p.flatten.compact.length}"
+    else
+      raise "Trouble - 2 candidates : #{first.inspect}, rework algorithm"
+    end
+  end
 end
 
 # Quite simple, just generate the fraction to a good level, then
@@ -181,8 +209,6 @@ def problem_80b(size = 100)
 end
 
 if __FILE__ == $0
-#  p problem_80(10000)
-#  p problem_80a(10000)
-  p problem_80b(10000)
+  p problem_79
 end
 
