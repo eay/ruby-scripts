@@ -143,9 +143,7 @@ def problem_85(target = 2_000_000)
   while y >= 1
     n = num_rec.call(x,y)
     # Don't need to check for n == target, not possible
-    if best[0] >= (n - target).abs
-      puts "n=#{n} x=#{x} y=#{y}"
-    end
+    puts "n=#{n} x=#{x} y=#{y}" if best[0] >= (n - target).abs
     best = [best,[(n-target).abs,n,x,y]].min
     if n > target
       y -= 1
@@ -154,6 +152,13 @@ def problem_85(target = 2_000_000)
     end
   end
   best[2] * best[3]
+end
+
+# Use pythagorian tripples with the sides of the form
+# (x, y+z), (y, x+z), (z, x+y)
+# So x, y and z < M
+# Look at problem 75
+def problem_86
 end
 
 if __FILE__ == $0
