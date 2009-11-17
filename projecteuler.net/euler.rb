@@ -161,12 +161,18 @@ end
 def problem_86
 end
 
+# hmm... while I am only looking at each possible sequence of characters,
+# I need to make sure to have an efficent way to count the number
+# of permutations that can be made from each number sequence.
+# The first version takes 12m33s, all of it in the permutation count code.
+# The second version uses permutations and takes 0.64 seconds
+# 8581146
 def problem_92
   hit = 0
   seen = {0 => 0, 1 => 1, 89 => 89}
 
   check = lambda do |n|
-    puts n.inspect
+#    puts n.inspect
     index = n.join.to_i
     return 0 if index == 0
     sum = index
@@ -183,9 +189,13 @@ def problem_92
       if off == (a.length-1)
         if check.call(a) == 89
           # now many uniq permutations of 'a' are there.
-          a.uniq
-
-          hit += 1 
+          if true
+            hit += a.permutations
+          else
+            h = {}
+            a.my_permutate {|a| h[a.join] = true }
+            hit += h.size
+          end
         end
       else
         values.call(a,off+1)
@@ -223,6 +233,6 @@ end
 
 if __FILE__ == $0
 
-  p problem_97
+  p problem_92
 end
 

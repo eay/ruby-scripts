@@ -422,6 +422,19 @@ class Array
       end
     end
   end
+
+  # Number of ways to permutate the elements.  If elements are
+  # duplicated, we handle it.
+  def permutations
+    f = self.length.factorial
+    u = self.uniq
+    if u.length != self.length
+      self.group_by {|i| i}.map {|k,v| v.length}.each do |n|
+        f /= n.factorial
+      end
+    end
+    f
+  end
 end
 
 if __FILE__ == $0
