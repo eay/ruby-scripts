@@ -161,8 +161,68 @@ end
 def problem_86
 end
 
+def problem_92
+  hit = 0
+  seen = {0 => 0, 1 => 1, 89 => 89}
+
+  check = lambda do |n|
+    puts n.inspect
+    index = n.join.to_i
+    return 0 if index == 0
+    sum = index
+    until seen[sum] do
+      sum = sum.to_s.each_byte.map {|b| (b-48)*(b-48)}.reduce(&:+)
+    end
+#    puts "#{n} => #{seen[sum]}"
+    seen[index] = seen[sum]
+  end
+
+  values = lambda do |a,off|
+    (a[off-1] .. 9).each do |v|
+      a[off] = v
+      if off == (a.length-1)
+        if check.call(a) == 89
+          # now many uniq permutations of 'a' are there.
+          a.uniq
+
+          hit += 1 
+        end
+      else
+        values.call(a,off+1)
+      end
+    end
+  end
+
+  a = Array.new(7,0)
+  values.call(a,0)
+  puts "seen.length = #{seen.length}"
+  hit
+end
+
+def problem_97
+  p = 28433
+  shift = 7830457
+  shift_amount = 10_000
+  mask = 10_000_000_000
+  mod = (1 << shift_amount) % mask
+
+#puts (p << shift) +1
+#puts ((p << shift)+1) % mask
+  loop do
+    if shift > shift_amount
+      p = (p * mod) % mask
+      shift -= shift_amount
+    else
+      p = (p << shift) % mask
+      break
+    end
+  end
+  p += 1
+  p.to_s[-10,10]
+end
+
 if __FILE__ == $0
 
-  p problem_85
+  p problem_97
 end
 
