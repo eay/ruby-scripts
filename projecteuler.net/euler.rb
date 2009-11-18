@@ -91,7 +91,7 @@ end
 # I could use this current algorithm and then try joining short runs....
 # It will be interesting to see how others solved this problem.
 def problem_83
-  if false
+  if true
     # Answer 2297
     cost = [
       [131, 673, 234, 103,  18],
@@ -145,43 +145,36 @@ def problem_83
     end
   end
 
-  vertex = []
-  (0...len).each do |y|
-    (0...len).each do |x|
-      vertex << y*len+x
-    end
-  end
-
   m = 0
   start = last = Time.now
-  (0...vertex.length).each do |k|
-    vk =vertex[k]
-    vkl =vk*len2
-    (0...vertex.length).each do |i|
+  (len2).times do |k|
+    kl =k*len2
+    (len2).times do |i|
       next if k == i
-      vi = vertex[i]
-      vil = vi*len2
-      vertex.each_with_index do |vj,j|
-#        next if i == j || k == j
-        m = path[vil+vk] + path[vkl+vj]
-        if path[vil+vj] > m
-          path[vil+vj] = m
+      il = i*len2
+      ilk = il+k
+      (len2).times do |j|
+#        next if (path[ilk] == big) || (path[kl+j] == big)
+        m = path[ilk] + path[kl+j]
+        if path[il+j] > m
+          path[il+j] = m
         end
         #m = [p1, p2+p3].min
 #        puts " k = #{k} m = #{m}"
-       # puts "#{i} k=#{k} => #{j} #{m}"
+        puts "#{i} k=#{k} => #{j} #{m}"
       end
     end
-    now = Time.now
-    e = now - last
-    last = now
-    h,m,s = e / 3600, m = (e / 60) % 60, s = e % 60
-    t1 = sprintf("%02d:%02d:%02d",h,m,s)
-    e = ((now - start).to_f * vertex.length / (k+1)).to_i
-    h,m,s = e / 3600, m = (e / 60) % 60, s = e % 60
-    t2 = sprintf("%02d:%02d:%02d",h,m,s)
-
-    puts "k=#{k} elapsed = #{t1} left = #{t2}"
+    if false
+      now = Time.now
+      e = now - last
+      last = now
+      h,m,s = e / 3600, m = (e / 60) % 60, s = e % 60
+      t1 = sprintf("%02d:%02d:%02d",h,m,s)
+      e = ((now - start).to_f * len / (k+1)).to_i
+      h,m,s = e / 3600, m = (e / 60) % 60, s = e % 60
+      t2 = sprintf("%02d:%02d:%02d",h,m,s)
+      puts "k=#{k} elapsed = #{t1} left = #{t2}"
+    end
   end
   puts path_get.call(0,0,len-1,len-1) + cost[0][0]
 end
