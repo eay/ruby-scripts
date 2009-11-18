@@ -82,10 +82,18 @@ def problem_82
   last.min
 end
 
+# Ugly, several goes, 320meg at runtime.  Slow, but works.  If it was
+# done in C it would be fast enough.
+# Look at http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
+# Recusion takes too long and it is hard to short circit it when
+# you can move backwards.  They may be some multi-pass algorithm I could
+# use.  Use a variant of 82, then serch for short cuts.
+# I could use this current algorithm and then try joining short runs....
+# It will be interesting to see how others solved this problem.
 def problem_83
   if false
     # Answer 2297
-    grid = [
+    cost = [
       [131, 673, 234, 103,  18],
       [201,  96, 342, 965, 150],
       [630, 803, 746, 422, 111],
@@ -94,115 +102,160 @@ def problem_83
     ]
     puts "Answer = #{2297}"
   else
-    grid = open("matrix.txt").each_line.to_a.map do |l|
+    cost = open("matrix.txt").each_line.to_a.map do |l|
       l.chomp.split(/,/).map(&:to_i)
     end
-#    grid = grid[0,10]
-#    grid.map! {|a| a[0,10]}
     puts "Answer <= 427337"
   end
-  # Seen will cache :l, :r, :u, :d best values when exiting from the location
-  best = 9999999999
-  path = []
-  backtrack = Array.new(grid.length) { Array.new(grid.length) }
-  seen = Array.new(grid.length) { Array.new(grid.length,nil) }
-  seen[grid.length-1][grid.length-1] = grid.last.last
+  len = cost.length
+  len2 = len * len
 
-  dump = lambda do |label,g,len|
-    puts label
-    0.upto(len-1) do |y|
-      0.upto(len-1) do |x|
-        next unless g[y]
-        printf " %6d",(g[y][x] || -1)
-      end
-    puts
+  puts cost.length
+
+  big = 9999999
+  path = Array.new(len2*len2,big)
+
+  path_set = lambda do |y,x,yy,xx,cost|
+    path[(y*len+x)*len2+yy*len+xx] = cost
   end
 
+  path2_set = lambda do |p1,p2,cost|
+    path[p1*len2+p2] = cost
   end
-  walk = lambda do |g,y,x,upto,in_from|
-    # puts path.last.inspect
-    # return nil unless we are on the grid 
-    unless y >= 0 && x >= 0 && g[y] && g[y][x]
-      print "+"
-      return nil 
-    end
-    # return if we have been here before, cycle detection
-    if backtrack[y][x]
-      print "b"
-      return nil 
-    end
-    # break out if we have seen better
-    if upto + g[y][x] > best
-#      print "o"
-      return nil 
-    end
-    # enable cycle protection
-    backtrack[y][x] = true
 
+  path_get = lambda do |y,x,yy,xx|
+    path[(y*len+x)*len2+yy*len+xx]
+  end
+  path2_get = lambda do |p1,p2|
+    path[p1*len2+p2]
+  end
 
-    # If we have been in this node before, it must have the smallest value
-    # possible, since we will only set it's value after searching all
-    # possible values from here.
-    if seen[y][x]
-      t = seen[y][x]
-      puts path.last.inspect
-#      puts "seen[#{y}][#{x}] = #{seen[y][x]}"
-      path.reverse.each do |yy,xx,v|
-#        puts "#{yy} #{xx} #{t}"
-        t += g[yy][xx]
-        seen[yy][xx] = t if (seen[yy][xx] || 999999999) > t
+  (0...len).each do |y|
+    (0...len).each do |x|
+      puts "setup x=#{x} y=#{y}"
+      path_set.call(y,x,y,x,   0)
+      if x+1 != len
+        path_set.call(y,x,y,x+1, cost[y][x+1])
+        path_set.call(y,x+1,y,x, cost[y][x])
       end
-      best = [best,t].min
-#      puts "BEST = #{best}" if best == t
-      r = t
-    else
-      # return nil if upto >= best 
-      upto += g[y][x]
-      cpath = [y,x,upto]
-      path << cpath
-      
-      if true
-        if in_from != :l && x < (g.length-1) && !backtrack[y][x+1]
-          sum_r = walk.call(g,y,x+1,upto,:r) 
+      if y+1 != len
+        path_set.call(y,x,y+1,x, cost[y+1][x]) 
+        path_set.call(y+1,x,y,x, cost[y][x])
+      end
+    end
+  end
+
+  vertex = []
+  (0...len).each do |y|
+    (0...len).each do |x|
+      vertex << y*len+x
+    end
+  end
+
+  m = 0
+  start = last = Time.now
+  (0...vertex.length).each do |k|
+    vk =vertex[k]
+    vkl =vk*len2
+    (0...vertex.length).each do |i|
+      next if k == i
+      vi = vertex[i]
+      vil = vi*len2
+      vertex.each_with_index do |vj,j|
+#        next if i == j || k == j
+        m = path[vil+vk] + path[vkl+vj]
+        if path[vil+vj] > m
+          path[vil+vj] = m
         end
-        if in_from != :u && y < (g.length-1) && !backtrack[y+1][x]
-          sum_d = walk.call(g,y+1,x,upto,:d)
+        #m = [p1, p2+p3].min
+#        puts " k = #{k} m = #{m}"
+       # puts "#{i} k=#{k} => #{j} #{m}"
+      end
+    end
+    now = Time.now
+    e = now - last
+    last = now
+    h,m,s = e / 3600, m = (e / 60) % 60, s = e % 60
+    t1 = sprintf("%02d:%02d:%02d",h,m,s)
+    e = ((now - start).to_f * vertex.length / (k+1)).to_i
+    h,m,s = e / 3600, m = (e / 60) % 60, s = e % 60
+    t2 = sprintf("%02d:%02d:%02d",h,m,s)
+
+    puts "k=#{k} elapsed = #{t1} left = #{t2}"
+  end
+  puts path_get.call(0,0,len-1,len-1) + cost[0][0]
+end
+
+# http://en.wikipedia.org/wiki/Dijkstra's_algorithm
+# has problems
+def problem_83a
+  if false
+    # Answer 2297
+    cost = [
+      [131, 673, 234, 103,  18],
+      [201,  96, 342, 965, 150],
+      [630, 803, 746, 422, 111],
+      [537, 699, 497, 121, 956],
+      [805, 732, 524,  37, 331]
+    ]
+    puts "Answer = #{2297}"
+  else
+    cost = open("matrix.txt").each_line.to_a.map do |l|
+      l.chomp.split(/,/).map(&:to_i)
+    end
+    puts "Answer <= 427337"
+  end
+  x_len = cost.length
+  y_len = cost.length
+
+  distance = Array.new(y_len) { Array.new(x_len,9999999) }
+  visited = Array.new(y_len) { Array.new(x_len,false) }
+
+  adj = lambda do |y,x|
+    ret = []
+    ret << [y-1,x] if y > 0
+    ret << [y,x-1] if x > 0
+    ret << [y+1,x] if y+1 < y_len
+    ret << [y,x+1] if x+1 < x_len
+    ret
+  end
+
+  walk = lambda do |y,x,depth|
+    puts "#{y} #{x} #{depth}"
+    distance[0][0] = cost[0][0]
+    ret = nil
+    path = []
+    loop do
+#      puts "#{y} #{x}"
+      if y+1 == y_len && x+1 == x_len
+        ret = [distance[y][x],y,x]
+        puts ret.inspect
+        break 
+      end
+      c_dist = distance[y][x]
+      nodes = adj.call(y,x).map do |yy,xx|
+        next if visited[yy][xx]
+        dist = cost[yy][xx] + c_dist
+        if dist < distance[yy][xx]
+          distance[yy][xx] = dist
         end
-#        if in_from != :r && x > 0 && !backtrack[y][x-1]
-#          sum_l = walk.call(g,y,x-1,upto,:l)
-#        end
-        if in_from != :d && y > 0 && !backtrack[y-1][x]
-          sum_u = walk.call(g,y-1,x,upto,:u)
-        end
+        [dist,yy,xx,0]
+      end.compact
+      if nodes.length > 0
+        path = path + nodes.sort.reverse
       else
-        sum_r = walk.call(g,y,x+1,upto,:r) unless in_from == :l
-        sum_d = walk.call(g,y+1,x,upto,:d) unless in_from == :u
-        sum_l = walk.call(g,y,x-1,upto,:l) unless in_from == :r
-        sum_u = walk.call(g,y-1,x,upto,:u) unless in_from == :d
+        puts "BAD #{y} #{x}"
       end
-      r = [sum_r,sum_l,sum_d,sum_u].compact.min
 
-      # Save the smallest value found
-#      puts "#{x} #{y} r = #{r}"
-#      puts "XXXXXXXXXXXXXXXXX #{y} #{x} #{r}" if r
-      if r
-#        puts "#{r} = [#{sum_r},#{sum_l},#{sum_d},#{sum_u}].compact.min upto = #{upto}"
-      end
-      # remove path
-      path.pop
-      r
+      visited[y][x] = true
+#      puts path.last.inspect
+      dd,y,x = path.pop
     end
-    # remove cycle protection
-    backtrack[y][x] = false
-#    dump.call("exit y = #{y} x = #{x}",seen,seen.length)
-    r
+    ret
   end
 
-  walk.call(grid.dup,0,0,0,nil)
-  dump.call "FINISHED",seen,10
-  dump.call "orig",grid,10
+  walk.call(0,0,0)
 
-  puts seen[0][0]
 end
 
 # Arrggg... put the 'generate next value' ahead of the
