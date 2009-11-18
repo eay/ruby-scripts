@@ -83,14 +83,14 @@ def problem_82
 end
 
 # Ugly, several goes, 320meg at runtime.  Slow, but works.  If it was
-# done in C it would be fast enough.
+# done in C it would be fast enough.  The C version takes 9m30s
 # Look at http://en.wikipedia.org/wiki/Floyd–Warshall_algorithm
 # Recusion takes too long and it is hard to short circit it when
 # you can move backwards.  They may be some multi-pass algorithm I could
 # use.  Use a variant of 82, then serch for short cuts.
 # I could use this current algorithm and then try joining short runs....
 # It will be interesting to see how others solved this problem.
-def problem_83
+def problem_83b
   if true
     # Answer 2297
     cost = [
@@ -195,7 +195,7 @@ def problem_83a
     cost = open("matrix.txt").each_line.to_a.map do |l|
       l.chomp.split(/,/).map(&:to_i)
     end
-    puts "Answer <= 427337"
+    puts "Answer <= 425185"
   end
   x_len = cost.length
   y_len = cost.length
@@ -248,6 +248,61 @@ def problem_83a
 
   walk.call(0,0,0)
 
+end
+
+# Solve via searching for neigbour. 0.11sec, the best way :-).
+# Dijkstra's could also be used, but some tweaking is needed
+def problem_83
+  if false
+    # Answer 2297
+    cost = [
+      [131, 673, 234, 103,  18],
+      [201,  96, 342, 965, 150],
+      [630, 803, 746, 422, 111],
+      [537, 699, 497, 121, 956],
+      [805, 732, 524,  37, 331]
+    ]
+    puts "Answer = #{2297}"
+  else
+    cost = open("matrix.txt").each_line.to_a.map do |l|
+      l.chomp.split(/,/).map(&:to_i)
+    end
+    puts "Answer = 425185"
+  end
+  x_len = cost.length
+  y_len = cost.length
+
+  big = 999999999
+  sums = Array.new(y_len) { Array.new(x_len,big) }
+
+  sums[0][0] = cost[0][0]
+
+  template = Array.new(4,big)
+  last_sum = big
+  last_times = 3
+  loop do
+    y_len.times do |y|
+      x_len.times do |x|
+        a = template.dup
+        me = cost[y][x]
+        a[0] = sums[y][x-1] + me if x > 0
+        a[1] = sums[y][x+1] + me if x < x_len-1
+        a[2] = sums[y-1][x] + me if y > 0
+        a[3] = sums[y+1][x] + me if y < y_len-1
+        a[4] = sums[y][x]
+        sums[y][x] = a.min
+      end
+    end
+    if last_sum == sums.last.last
+      last_times -= 1
+      break if last_times <= 0
+    else
+      last_sum = sums.last.last
+    end
+    puts sums.last.last
+  end
+
+  sums.last.last
 end
 
 # Arrggg... put the 'generate next value' ahead of the
