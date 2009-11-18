@@ -110,17 +110,15 @@ def problem_83
   len = cost.length
   len2 = len * len
 
-  puts cost.length
-
   big = 9999999
   path = Array.new(len2*len2,big)
 
-  path_set = lambda do |y,x,yy,xx,cost|
-    path[(y*len+x)*len2+yy*len+xx] = cost
+  path_set = lambda do |y,x,yy,xx,c|
+    path[(y*len+x)*len2+yy*len+xx] = c
   end
 
-  path2_set = lambda do |p1,p2,cost|
-    path[p1*len2+p2] = cost
+  path2_set = lambda do |p1,p2,c|
+    path[p1*len2+p2] = c
   end
 
   path_get = lambda do |y,x,yy,xx|
@@ -132,7 +130,6 @@ def problem_83
 
   (0...len).each do |y|
     (0...len).each do |x|
-      puts "setup x=#{x} y=#{y}"
       path_set.call(y,x,y,x,   0)
       if x+1 != len
         path_set.call(y,x,y,x+1, cost[y][x+1])
@@ -142,20 +139,22 @@ def problem_83
         path_set.call(y,x,y+1,x, cost[y+1][x]) 
         path_set.call(y+1,x,y,x, cost[y][x])
       end
+      #puts "setup x=#{x} y=#{y} #{path_get.call(y,x,y,x)}"
     end
   end
 
   m = 0
   start = last = Time.now
-  (len2).times do |k|
+  len2.times do |k|
     kl =k*len2
-    (len2).times do |i|
+    len2.times do |i|
       next if k == i
       il = i*len2
       ilk = il+k
-      (len2).times do |j|
-#        next if (path[ilk] == big) || (path[kl+j] == big)
+      len2.times do |j|
+        next if (path[ilk] == big) || (path[kl+j] == big)
         m = path[ilk] + path[kl+j]
+        print "#{path[ilk]} + #{path[kl+j]} "
         if path[il+j] > m
           path[il+j] = m
         end
