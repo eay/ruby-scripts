@@ -154,18 +154,16 @@ def problem_83
 
   m = 0
   start = last = Time.now
-  (0...vertex.length).each do |k|
-    vk =vertex[k]
-    vkl =vk*len2
-    (0...vertex.length).each do |i|
+  (len2 -1).times do |k|
+    vkl =k*len2
+    (len2-1).times do |i|
       next if k == i
-      vi = vertex[i]
-      vil = vi*len2
-      vertex.each_with_index do |vj,j|
-#        next if i == j || k == j
-        m = path[vil+vk] + path[vkl+vj]
-        if path[vil+vj] > m
-          path[vil+vj] = m
+      vil = i*len2
+      vilk = vil+k
+      (len2-1).times do |j|
+        m = path[vilk] + path[vkl+j]
+        if path[vil+j] > m
+          path[vil+j] = m
         end
         #m = [p1, p2+p3].min
 #        puts " k = #{k} m = #{m}"
