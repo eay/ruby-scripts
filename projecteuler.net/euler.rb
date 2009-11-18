@@ -83,7 +83,7 @@ def problem_82
 end
 
 def problem_83
-  if true
+  if false
     # Answer 2297
     grid = [
       [131, 673, 234, 103,  18],
@@ -97,89 +97,110 @@ def problem_83
     grid = open("matrix.txt").each_line.to_a.map do |l|
       l.chomp.split(/,/).map(&:to_i)
     end
-    puts "Answer <= 260324"
+#    grid = grid[0,10]
+#    grid.map! {|a| a[0,10]}
+    puts "Answer <= 427337"
   end
   # Seen will cache :l, :r, :u, :d best values when exiting from the location
   best = 9999999999
-  path = [[0,0,grid[0][0]]]
+  path = []
   backtrack = Array.new(grid.length) { Array.new(grid.length) }
   seen = Array.new(grid.length) { Array.new(grid.length,nil) }
   seen[grid.length-1][grid.length-1] = grid.last.last
 
-  walk = lambda do |g,x,y,upto,in_from|
+  dump = lambda do |label,g,len|
+    puts label
+    0.upto(len-1) do |y|
+      0.upto(len-1) do |x|
+        next unless g[y]
+        printf " %6d",(g[y][x] || -1)
+      end
+    puts
+  end
+
+  end
+  walk = lambda do |g,y,x,upto,in_from|
+    # puts path.last.inspect
     # return nil unless we are on the grid 
-    return nil unless y >= 0 && x >= 0 && g[y] && g[y][x]
+    unless y >= 0 && x >= 0 && g[y] && g[y][x]
+      print "+"
+      return nil 
+    end
     # return if we have been here before, cycle detection
-    return nil if backtrack[y][x]
+    if backtrack[y][x]
+      print "b"
+      return nil 
+    end
     # break out if we have seen better
-    return nil if upto + g[y][x] > best
+    if upto + g[y][x] > best
+#      print "o"
+      return nil 
+    end
     # enable cycle protection
     backtrack[y][x] = true
 
-    cpath = [y,x,upto]
-    path << cpath
 
     # If we have been in this node before, it must have the smallest value
     # possible, since we will only set it's value after searching all
     # possible values from here.
     if seen[y][x]
-      b = upto + seen[y][x]
-      path.each do |yy,xx,v|
-        seen[yy][xx] = v if (seen[yy][xx] || 999999999) > v
+      t = seen[y][x]
+      puts path.last.inspect
+#      puts "seen[#{y}][#{x}] = #{seen[y][x]}"
+      path.reverse.each do |yy,xx,v|
+#        puts "#{yy} #{xx} #{t}"
+        t += g[yy][xx]
+        seen[yy][xx] = t if (seen[yy][xx] || 999999999) > t
       end
-      best = [best,b].min
-      puts "BEST = #{best}" if best == b
-      r = b
+      best = [best,t].min
+#      puts "BEST = #{best}" if best == t
+      r = t
     else
       # return nil if upto >= best 
       upto += g[y][x]
+      cpath = [y,x,upto]
+      path << cpath
       
-      if false
-        sum_r = walk.call(g,x+1,y,upto,:r) unless in_from == :l
-        sum_d = walk.call(g,x,y+1,upto,:d) unless in_from == :u
-        sum_l = walk.call(g,x-1,y,upto,:l) unless in_from == :r
-        sum_u = walk.call(g,x,y-1,upto,:u) unless in_from == :d
+      if true
+        if in_from != :l && x < (g.length-1) && !backtrack[y][x+1]
+          sum_r = walk.call(g,y,x+1,upto,:r) 
+        end
+        if in_from != :u && y < (g.length-1) && !backtrack[y+1][x]
+          sum_d = walk.call(g,y+1,x,upto,:d)
+        end
+#        if in_from != :r && x > 0 && !backtrack[y][x-1]
+#          sum_l = walk.call(g,y,x-1,upto,:l)
+#        end
+        if in_from != :d && y > 0 && !backtrack[y-1][x]
+          sum_u = walk.call(g,y-1,x,upto,:u)
+        end
       else
-        sum_r = walk.call(g,x+1,y,upto,:r) unless in_from == :l
-        sum_d = walk.call(g,x,y+1,upto,:d) unless in_from == :u
-        sum_l = walk.call(g,x-1,y,upto,:l) unless in_from == :r
-        sum_u = walk.call(g,x,y-1,upto,:u) unless in_from == :d
+        sum_r = walk.call(g,y,x+1,upto,:r) unless in_from == :l
+        sum_d = walk.call(g,y+1,x,upto,:d) unless in_from == :u
+        sum_l = walk.call(g,y,x-1,upto,:l) unless in_from == :r
+        sum_u = walk.call(g,y-1,x,upto,:u) unless in_from == :d
       end
       r = [sum_r,sum_l,sum_d,sum_u].compact.min
 
       # Save the smallest value found
 #      puts "#{x} #{y} r = #{r}"
-      puts "XXXXXXXXXXXXXXXXX #{x} #{y} #{r}" if r
+#      puts "XXXXXXXXXXXXXXXXX #{y} #{x} #{r}" if r
       if r
-        puts "#{r} = [#{sum_r},#{sum_l},#{sum_d},#{sum_u}].compact.min upto = #{upto}"
-        seen[y][x] = upto + r 
+#        puts "#{r} = [#{sum_r},#{sum_l},#{sum_d},#{sum_u}].compact.min upto = #{upto}"
       end
+      # remove path
+      path.pop
       r
     end
-    # remove path
-    path.pop
     # remove cycle protection
     backtrack[y][x] = false
-  puts "exit x = #{x} y = #{y}"
-  0.upto(g.length-1) do |y|
-    0.upto(g.length-1) do |x|
-      next unless seen[y]
-      printf " %8d",(seen[y][x] || -1)
-    end
-    puts
-  end
+#    dump.call("exit y = #{y} x = #{x}",seen,seen.length)
     r
   end
 
   walk.call(grid.dup,0,0,0,nil)
-  puts "FINISHED"
-  0.upto(grid.length-1) do |y|
-    0.upto(grid.length-1) do |x|
-      next unless seen[y]
-      printf " %8d",(seen[y][x] || -1)
-    end
-    puts
-  end
+  dump.call "FINISHED",seen,10
+  dump.call "orig",grid,10
 
   puts seen[0][0]
 end
