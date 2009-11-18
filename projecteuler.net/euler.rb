@@ -284,7 +284,6 @@ def problem_83
 
   sums[0][0] = cost[0][0]
 
-<<<<<<< HEAD:projecteuler.net/euler.rb
   last_times,last_sum = 3,big
   loop do
     y_len.times do |y|
@@ -295,21 +294,6 @@ def problem_83
         a << sums[y][x+1] + me if x < x_len-1
         a << sums[y-1][x] + me if y > 0
         a << sums[y+1][x] + me if y < y_len-1
-=======
-  template = Array.new(4,big)
-  last_sum = big
-  last_times = 3
-  loop do
-    y_len.times do |y|
-      x_len.times do |x|
-        a = template.dup
-        me = cost[y][x]
-        a[0] = sums[y][x-1] + me if x > 0
-        a[1] = sums[y][x+1] + me if x < x_len-1
-        a[2] = sums[y-1][x] + me if y > 0
-        a[3] = sums[y+1][x] + me if y < y_len-1
-        a[4] = sums[y][x]
->>>>>>> e377b4a6b77cdb8ffab531411624aea98bb14e6e:projecteuler.net/euler.rb
         sums[y][x] = a.min
       end
     end
