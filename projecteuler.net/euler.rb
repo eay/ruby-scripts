@@ -309,6 +309,143 @@ def problem_83
   sums.last.last
 end
 
+class Problem84
+  Squares = %w{
+    go   a1 cc1 a2  t1 r1 b1  ch1 b2 b3
+    jail c1 u1  c2  c3 r2 d1  cc2 d2 d3
+    fp   e1 ch2 e2  e3 r3 f1  f2  u2 f3
+    g2j  g1 g2  cc3 g3 r4 ch3 h1  t2 h2
+    }.map(&:to_sym)
+
+  CommunityChest = [
+    :go, :jail, nil, nil,
+    nil, nil, nil, nil,
+    nil, nil, nil, nil,
+    nil, nil, nil, nil ]
+
+  Chance = [
+    :go, :jail, :c1,    :e3,
+    :h2, :r1,   :nextrr, :nextrr,
+    :nextu, :back3, nil, nil,
+    nil, nil, nil, nil ]
+
+  def initialize(sides = 6)
+    @sides = sides
+    @where = Squares.find_index(:go)
+    @hits = Array.new(Squares.length,0)
+    @chance = Chance.dup
+    @community_chest = CommunityChest.dup
+    @doubles = 0
+  end
+
+  # location is the symbolic name
+  def do_community_chest(location)
+    @community_chest = CommunityChest.dup if @community_chest.length == 0
+    pick = @community_chest.delete_at(rand(@community_chest.length))
+    location = pick if pick
+    location
+  end
+
+  # location is the symbolic name
+  def do_chance(location)
+    @chance = Chance.dup if @chance.length == 0
+    pick = @chance.delete_at(rand(@chance.length))
+    case pick
+    when :nextrr
+      case location
+      when :ch1 then ret = :r2
+      when :ch2 then ret = :r3
+      when :ch3 then ret = :r1
+      end
+    when :nextu
+      case location
+      when :ch1 then ret = :u1
+      when :ch2 then ret = :u2
+      when :ch3 then ret = :u1
+      end
+    when :back3
+      case location
+      when :ch1 then ret = :t1
+      when :ch2 then ret = :d3
+      when :ch3 then ret = do_community_chest(:cc3)
+      end
+    when nil
+      ret = location
+    else
+      ret = pick
+    end
+  end
+
+  @@die = Array.new(13,0)
+  @@doubles = 0
+
+  def roll
+    d1 = rand(@sides) + 1
+    d2 = rand(@sides) + 1
+    @@die[d1+d2] += 1
+    if d1 == d2
+      @doubles += 1 
+      @@doubles += 1
+    else
+      @doubles = 0
+    end
+    if @doubles == 3
+      where = :jail
+      @doubles = 0
+    else
+      where = Squares[(@where + d1 + d2) % Squares.length]
+      case where
+      when :g2j 
+        where = :jail
+      when :cc1, :cc2, :cc3
+        where = do_community_chest(where)
+      when :ch1, :ch2, :ch3
+        where = do_chance(where)
+      else
+      end
+    end
+    @where = Squares.find_index(where)
+    @hits[@where] += 1
+  end
+
+  def roll_dice(num_rolls = 1_000_000)
+    num_rolls.times do
+      roll
+    end
+  end
+
+  def result
+    total = @hits.reduce(&:+).to_f
+    s = @hits.zip(Squares).sort.reverse
+    ret = "%02d" % Squares.find_index(s[0][1])
+    ret += "%02d" % Squares.find_index(s[1][1])
+    ret += "%02d" % Squares.find_index(s[2][1])
+    s.each do |hits,sym|
+      printf "%-6s %6.3f\n",sym.to_s,hits.to_f*100.0/total
+    end
+
+    puts "total = #{total}"
+    puts "doubles = #{@@doubles}, should be #{total/@sides}"
+    (2..(@sides*2)).each do |i|
+      if i > @sides+1
+        ans = total * (@sides*2 + 1 - i) / (@sides*@sides)
+      else
+        ans = total * (i - 1) / (@sides*@sides)
+      end
+      puts "#{i} #{@@die[i]} should be #{ans.to_i}"
+    end
+    ret
+  end
+end
+
+def problem_84
+  p84 = Problem84.new(4)
+  p84.roll_dice(1_000_000)
+  r = p84.result
+  puts "101524 expected"
+  r
+end
+
 # Arrggg... put the 'generate next value' ahead of the
 # 'save current value if best'.
 def problem_85(target = 2_000_000)
@@ -426,6 +563,6 @@ end
 
 if __FILE__ == $0
 
-  p problem_83
+  p problem_84
 end
 
