@@ -488,8 +488,15 @@ end
 # (x, y+z), (y, x+z), (z, x+y)
 # So x, y and z < M
 # Look at problem 75
+# I need to search with prime multiples, and use factors to multiply the
+# existing results
+# Key things for next time, 
+# given q <= q <= r
+# then d = sqrt(r**2 + (p+q)**2) will be the shortest route
+#
 def problem_86
-  m = 100
+  m = 1818
+#  m = 100
 
   p3 = lambda do |mm,nn|
     raise "bad value" if mm == nn
@@ -502,24 +509,32 @@ def problem_86
 
   in_range = lambda {|a,b,c| a <= m && b <= 2*m}
 
-  solutions = lambda do |x,b,c|
-    ret = []
+  solutions = lambda do |ret,x,b,c|
+    return unless x <= m
 #    puts "#{x} #{b} #{c}"
     bm = (b >= m) ? m-1 : b-1
-    1.upto(bm) do |y|
-      z = b - y
-      raise "bad y value" if y == 0 || x == 0 || z == 0
-      next unless x <= m && y <= m && z <= m # Should not be needed
-#      puts "#{x} #{y} #{z}"
-      p1 = c.to_f # Math.sqrt(x**2 + (y+z)**2)
-      p2 = Math.sqrt(y**2 + (x+z)**2)
-      p3 = Math.sqrt(z**2 + (x+y)**2)
-#      print "#{p1} #{p2} #{p3} "
-      if p1 <= p2 && p1 <= p3
-        ret << [x,y,z]
+    bm = x-1 if x <= bm
+    if x < b 
+      ys = b - x
+    else
+      ys = 1
+    end
+    p1 = c.to_f # Math.sqrt(x**2 + (y+z)**2)
+    z = b - ys
+    if p1 <= Math.sqrt(ys**2 + (x+z)**2) &&
+       p1 <= Math.sqrt(z**2 + (x+ys)**2)
+      if false
+        p = [b,x].sort
+        if r = ret[p]
+          puts "dup r = #{r} #{bm-ys+1}"
+        end
+        ret[p] = bm-ys+1
+      else
+        ys.upto(bm) do |y|
+          ret[[x,y,b-y].sort] = true
+        end
       end
     end
-    ret
   end
 
   hits = Hash.new
@@ -529,31 +544,41 @@ def problem_86
       next unless (x+y).odd? && x.gcd(y) == 1
       sides = p3.call(x,y).sort
       next unless in_range.call(*sides)
-      puts sides.inspect
       hits[sides] = true
       hit += 1
     end
   end
-  good = []
+  puts "Generated primative triangles"
+  good = {}
+  # Sort the primative triangles into sets according to
+  # max M value.  Then for each increase, pick the groups with
+  # factors into the M and solutions.call.
+  # This should let us slide out.
+  
   hits.each_key do |p|
     a,b,c = p
-    (1..(2*m/[a,b].max)).each do |k|
+    (1..(2*m/([a,b].max))).each do |k|
       aa,bb,cc = a*k, b*k, c*k
-      good += solutions.call(aa,bb,cc)
-      good += solutions.call(bb,aa,cc)
+      solutions.call(good,aa,bb,cc)
+      solutions.call(good,bb,aa,cc)
+#      good += solutions.call(aa,bb,cc)
+#      good += solutions.call(bb,aa,cc)
     end
   end
+#  good.compact!
   puts good.length
   puts "Triangles =>        #{hit}"
   puts "Unique Triangles => #{hits.length}"
-  good = good.map {|a| a.sort }.uniq.sort
+#  good = good.map {|a| a.sort }.uniq.sort
+#  good = good.sort.uniq
+  puts "sorted"
 
-  hit = 0
-  good.each do |p|
-    hit = m / p.max
-    puts "#{hit} = #{m} / #{p.max} #{p.inspect}"
-  end
-  puts "Hit = #{hit}"
+#  hit = 0
+#  good.each_pair do |p,v|
+#    puts "#{p} => #{v}"
+#    hit += v
+#  end
+#  puts "Hit = #{hit}"
 
   good.length
 end
