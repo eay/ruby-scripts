@@ -494,7 +494,7 @@ end
 # given q <= q <= r
 # then d = sqrt(r**2 + (p+q)**2) will be the shortest route
 #
-def problem_86
+def problem_86a
   m = 1818
 #  m = 100
 
@@ -581,6 +581,31 @@ def problem_86
 #  puts "Hit = #{hit}"
 
   good.length
+end
+
+# The correct thing to notice is that going from 99 to 100, we only need to
+# check the longest side for matches
+# This works in 3 seconds vs the 4 minutes of my 86a.  Also note that
+# my version was not incremental, so it was hard to know when to stop
+def problem_86
+  total = 0
+  a = 1
+  loop do
+    a += 1
+    aa = a*a
+    (1..(a*2-1)).each do |d|
+      tmp = Math.sqrt(aa + d*d)
+      next if tmp != tmp.to_i
+
+      e = d/2
+      max_sols = e
+      e += 1 if d.odd?
+      expanded = a - e + 1
+      total += (expanded > max_sols) ? max_sols : expanded
+    end
+    break if total > 1_000_000
+  end
+  a
 end
 
 # hmm... while I am only looking at each possible sequence of characters,
