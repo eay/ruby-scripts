@@ -489,6 +489,73 @@ end
 # So x, y and z < M
 # Look at problem 75
 def problem_86
+  m = 100
+
+  p3 = lambda do |mm,nn|
+    raise "bad value" if mm == nn
+    mm,nn = nn,mm if mm < nn
+    m2 = mm*mm
+    n2 = nn*nn
+    a,b,c = [m2 - n2, 2*mm*nn, m2 + n2]
+    [m2 - n2, 2*mm*nn, m2 + n2]
+  end
+
+  in_range = lambda {|a,b,c| a <= m && b <= 2*m}
+
+  solutions = lambda do |x,b,c|
+    ret = []
+#    puts "#{x} #{b} #{c}"
+    bm = (b >= m) ? m-1 : b-1
+    1.upto(bm) do |y|
+      z = b - y
+      raise "bad y value" if y == 0 || x == 0 || z == 0
+      next unless x <= m && y <= m && z <= m # Should not be needed
+#      puts "#{x} #{y} #{z}"
+      p1 = c.to_f # Math.sqrt(x**2 + (y+z)**2)
+      p2 = Math.sqrt(y**2 + (x+z)**2)
+      p3 = Math.sqrt(z**2 + (x+y)**2)
+#      print "#{p1} #{p2} #{p3} "
+      if p1 <= p2 && p1 <= p3
+        ret << [x,y,z]
+      end
+    end
+    ret
+  end
+
+  hits = Hash.new
+  hit = 0
+  (1..(m/2)).each do |x|
+    ((x+1)..(m/2+1)).each do |y|
+      next unless (x+y).odd? && x.gcd(y) == 1
+      sides = p3.call(x,y).sort
+      next unless in_range.call(*sides)
+      puts sides.inspect
+      hits[sides] = true
+      hit += 1
+    end
+  end
+  good = []
+  hits.each_key do |p|
+    a,b,c = p
+    (1..(2*m/[a,b].max)).each do |k|
+      aa,bb,cc = a*k, b*k, c*k
+      good += solutions.call(aa,bb,cc)
+      good += solutions.call(bb,aa,cc)
+    end
+  end
+  puts good.length
+  puts "Triangles =>        #{hit}"
+  puts "Unique Triangles => #{hits.length}"
+  good = good.map {|a| a.sort }.uniq.sort
+
+  hit = 0
+  good.each do |p|
+    hit = m / p.max
+    puts "#{hit} = #{m} / #{p.max} #{p.inspect}"
+  end
+  puts "Hit = #{hit}"
+
+  good.length
 end
 
 # hmm... while I am only looking at each possible sequence of characters,
@@ -562,7 +629,6 @@ def problem_97
 end
 
 if __FILE__ == $0
-
-  p problem_84
+  p problem_86
 end
 
