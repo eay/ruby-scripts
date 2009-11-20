@@ -620,11 +620,14 @@ def problem_87
   end
 
   hits = {}
-  p4.reverse.each do |n4|
-    p3.reverse.each do |n3|
-      p2.reverse.each do |n2|
-        n = n4 + n3 + n2
-        hits[n] = true if n < top
+  p4.each do |n4|
+    p3.each do |n3|
+      nn = n3 + n4
+      break if nn + p2.first >= top
+      p2.each do |n2|
+        n = nn + n2
+        break if n >= top
+        hits[n] = true 
       end
     end
   end
