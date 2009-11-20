@@ -180,6 +180,10 @@ class Integer
     (1..self).reduce(1) {|a,n| a*n}
   end
 
+  def triangle
+    self * (self+1) / 2
+  end
+
   # Break a number into it's digits
   def to_digits
 #    self.to_s.split(//)                       84sec
