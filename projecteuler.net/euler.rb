@@ -608,6 +608,29 @@ def problem_86
   a
 end
 
+def problem_87
+  top = 50_000_000
+  max2,max3,max4 = (2..4).map {|n| (Math::E ** (Math.log(top)/n)).to_i}
+  p2,p3,p4 = [],[],[]
+  Primes.each do |p|
+    break if p > max2
+    p2 << p**2 
+    p3 << p**3 if p <= max3
+    p4 << p**4 if p <= max4
+  end
+
+  hits = {}
+  p4.reverse.each do |n4|
+    p3.reverse.each do |n3|
+      p2.reverse.each do |n2|
+        n = n4 + n3 + n2
+        hits[n] = true if n < top
+      end
+    end
+  end
+  hits.length
+end
+
 # hmm... while I am only looking at each possible sequence of characters,
 # I need to make sure to have an efficent way to count the number
 # of permutations that can be made from each number sequence.
@@ -679,6 +702,6 @@ def problem_97
 end
 
 if __FILE__ == $0
-  p problem_86
+  p problem_87
 end
 
