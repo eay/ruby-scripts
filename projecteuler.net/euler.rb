@@ -654,10 +654,8 @@ def problem_88
   end
 
   generate = lambda do |n|
-    n = n.dup
     k,mul,sum = k_val.call(n)
 
-#    puts "k=#{k} mul=#{mul} sum=#{sum} #{n.inspect}"
     if k <= max
       if n.length >= 2
         if ktab[k]
@@ -667,21 +665,17 @@ def problem_88
         end
       end
 
-      # Extent
-      m = n.dup + [2]
-      k = generate.call(m) 
+      m = n + [2]
+      generate.call(m) 
 
-#      puts "m=>#{m.inspect}"
-#      puts "while #{m.length} <= 1 || #{m[-2]} > #{m[-1]}"
       while m.length <= 1 || m[-2] > m[-1]
         m[-1] += 1 
-#        puts "new=>#{m.inspect}"
-        k,mul,sum = k_val.call(m)
-        break if k > max
-        generate.call(m) 
+        break unless generate.call(m)
       end
+      true
+    else
+      false
     end
-    k
   end
 
   m = [2]
@@ -690,13 +684,7 @@ def problem_88
     m[0] += 1
   end
 
-  ktab.each_with_index do |a,i|
-    if a
-      puts "k=#{i}: #{a.inspect}"
-    end
-  end
-
-  ktab.map {|a| puts a.inspect; a ? a[0] : 0}.uniq.reduce(&:+)
+  ktab.map {|a| a ? a[0] : 0}.uniq.reduce(&:+)
 end
 
 # hmm... while I am only looking at each possible sequence of characters,
