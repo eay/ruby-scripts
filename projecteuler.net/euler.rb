@@ -634,6 +634,71 @@ def problem_87
   hits.length
 end
 
+# For a particular value of k, [k,2, 1 * (k-2)] is a solution.
+# We can reduce this by converting numbers, i.e
+# k=5: 10=[5,2,1,1,1] => 8=[2,2,2,1,1]
+# k=27: 27=[3,3,3,1*24] 18=[3,3,3,1*15]
+# We need numbers where their sum is < their multiple, then number of 1's
+# add upto k
+#
+def problem_88
+  max = 12000
+#  2.upto(1200) do |k|
+  ktab = []
+
+  k_val = lambda do |n|
+    mul = n.reduce(&:*) || 0
+    sum = n.reduce(&:+) || 0
+    k = n.length + (mul -sum)
+    [k,mul,sum]
+  end
+
+  generate = lambda do |n|
+    n = n.dup
+    k,mul,sum = k_val.call(n)
+
+#    puts "k=#{k} mul=#{mul} sum=#{sum} #{n.inspect}"
+    if k <= max
+      if n.length >= 2
+        if ktab[k]
+          ktab[k] = [ktab[k],[mul,n.dup]].min
+        else
+          ktab[k] = [mul,n.dup]
+        end
+      end
+
+      # Extent
+      m = n.dup + [2]
+      k = generate.call(m) 
+
+#      puts "m=>#{m.inspect}"
+#      puts "while #{m.length} <= 1 || #{m[-2]} > #{m[-1]}"
+      while m.length <= 1 || m[-2] > m[-1]
+        m[-1] += 1 
+#        puts "new=>#{m.inspect}"
+        k,mul,sum = k_val.call(m)
+        break if k > max
+        generate.call(m) 
+      end
+    end
+    k
+  end
+
+  m = [2]
+  while m[0] <= max
+    generate.call(m)
+    m[0] += 1
+  end
+
+  ktab.each_with_index do |a,i|
+    if a
+      puts "k=#{i}: #{a.inspect}"
+    end
+  end
+
+  ktab.map {|a| puts a.inspect; a ? a[0] : 0}.uniq.reduce(&:+)
+end
+
 # hmm... while I am only looking at each possible sequence of characters,
 # I need to make sure to have an efficent way to count the number
 # of permutations that can be made from each number sequence.
@@ -705,6 +770,7 @@ def problem_97
 end
 
 if __FILE__ == $0
-  p problem_87
+  p problem_88
 end
+
 
