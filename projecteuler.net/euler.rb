@@ -687,6 +687,84 @@ def problem_88
   ktab.map {|a| a ? a[0] : 0}.uniq.reduce(&:+)
 end
 
+# I == 1
+# V == 5
+# X == 10
+# L == 50
+# C == 100
+# D == 500
+# M == 1000
+# There are smaller solutions that are not so carefull checking input, in python
+#
+# import re
+# count = 0
+# for s in open('roman.txt','r'):
+#   l = len(s)
+#   s = re.sub('IIII','IV',s)
+#   s = re.sub('XXXX','XL',s)
+#   s = re.sub('CCCC','CD',s)
+#   s = re.sub('VIV','IX',s)
+#   s = re.sub('LXL','XC',s)
+#   s = re.sub('DCD','CM',s)
+#   count += l - len(s)
+# print count
+#
+# I personally don't like this kind of solition......
+#
+def problem_89
+  convert = [
+    [100,"CM","CD",/^(M*)(D?)(C*)$/,"M","D","C"],
+    [ 10,"XC","XL",/^(C*)(L?)(X*)$/,"C","L","X"],
+    [  1,"IX","IV",/^(X*)(V?)(I*)$/,"X","V","I"],
+  ]
+
+  saved = 0
+
+  open("roman.txt").each_line do |txt|
+    txt.chomp!
+    if m = /^(M*?)(C?[DM]+C*|C*)??(X?[LC]+X*|X*)?(I?[XV]+I*|I*)?$/.match(txt)
+      num = m[1].length * 1000
+      (0..2).each do |i|
+        mul,m9,m4,mr = convert[i]
+        if m[i+2]
+          case m[i+2]
+          when nil
+          when m9 then num += 9 * mul
+          when m4 then num += 4 * mul
+          when mr then num += (10 * $1.length + 5 * $2.length + $3.length)* mul
+          else
+            raise "unable to parse #{m[2]}"
+          end
+        end
+      end
+    else
+      raise "unable to parse '#{txt}'"
+    end
+    txt_num = num
+    out = ""
+    convert.each do |mul,m9,m4,mr,m10,m5,m1|
+      out << m10 * (num / (10*mul))
+      num %= (10*mul)
+      n = num / mul
+      case n
+      when 9 then out << m9
+      when 4 then out << m4
+      else
+        if n >= 5
+          out << m5 + m1 * (n - 5)
+        else
+          out << m1 * n
+        end
+      end
+      num -= n * mul
+    end
+
+    puts "#{txt} => #{txt_num} => #{out} diff = #{txt.length - out.length}" 
+    saved += txt.length - out.length
+  end
+  saved
+end
+
 # hmm... while I am only looking at each possible sequence of characters,
 # I need to make sure to have an efficent way to count the number
 # of permutations that can be made from each number sequence.
@@ -758,7 +836,7 @@ def problem_97
 end
 
 if __FILE__ == $0
-  p problem_88
+  p problem_89
 end
 
 
