@@ -1032,6 +1032,47 @@ def problem_92
   hit
 end
 
+def problem_93
+  top = 4
+  ops = [:"+",:"*",:"/",:"-"]
+  max = [2]
+  loop do
+    d = top
+#   (4..top).each do |d|
+    [d-1,d-2,d-3,d-4,d-5,d-6,d-7,d-8,d/2].each do |c|
+      c = d - 1
+      (2...([c,5].min)).each do |b|
+        (1...b).each do |a|
+          nums = Array.new(0,nil)
+          nums[0] = 1
+          [a,b,c,d].permutation do |i0,i1,i2,i3|
+            ops.each do |op0|
+              r0 = i0.to_f.send(op0,i1.to_f)
+              ops.each do |op1|
+                r1 = r0.send(op1,i2.to_f)
+                ops.each do |op2|
+                  r2 = r1.send(op2,i3.to_f)
+                  nums[r2.to_i] = 1 if r2 > 0 && r2.floor == r2
+               end
+              end
+            end
+          end
+          num = nums.index(nil) - 1
+          old = max
+          new = [num,a,b,c,d]
+          if (new <=> max) >= 1
+            puts "#{num} => #{a} #{b} #{c} #{d}"
+          end
+          max = [new,max].max
+        end
+      end
+    end
+    break if top > 10000
+    puts "top = #{top}"
+    top += 1
+  end
+end
+
 def problem_97
   p = 28433
   shift = 7830457
@@ -1055,7 +1096,7 @@ def problem_97
 end
 
 if __FILE__ == $0
-  p problem_91
+  p problem_93
 end
 
 
