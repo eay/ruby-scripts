@@ -895,6 +895,35 @@ def problem_90
   puts "total = #{total}"
 end
 
+# Quite simple, just walk the edges checking to see any of the angles are
+# 90 degrees.
+# A bit of a grunt at 2.3sec, I could probably improve things by caching
+# hits and checking
+def problem_91
+  size = 50
+  hits = 0
+  hit = Hash.new
+  (1..size).each do |x|
+    (1..size).each do |y|
+      (0..x).each do |xd|
+        (0..y).each do |yd|
+          next if xd == x && yd == y
+          aa = y**2 + xd**2
+          cc = x**2 + yd**2
+          bb = (x - xd)**2 + (y - yd)**2
+          if (aa + bb == cc) ||
+             (bb + cc == aa) ||
+             (cc + aa == bb)
+            hit[[[0,0],[xd,y],[x,yd]]] = true
+          end
+        end
+      end
+    end
+  end
+  #hit.each_key {|k| puts k.inspect}
+  hit.length
+end
+
 # hmm... while I am only looking at each possible sequence of characters,
 # I need to make sure to have an efficent way to count the number
 # of permutations that can be made from each number sequence.
@@ -966,7 +995,7 @@ def problem_97
 end
 
 if __FILE__ == $0
-  p problem_90
+  p problem_91
 end
 
 
