@@ -904,13 +904,17 @@ def problem_91
   hits = 0
   hit = Hash.new
   (1..size).each do |x|
+    x2 = x**2
     (1..size).each do |y|
+      y2 = y**2
       (0..x).each do |xd|
+        xd2 = xd**2
+        x_xd2 = (x - xd)**2
         (0..y).each do |yd|
           next if xd == x && yd == y
-          aa = y**2 + xd**2
-          cc = x**2 + yd**2
-          bb = (x - xd)**2 + (y - yd)**2
+          aa = y2 + xd2
+          cc = x2 + yd**2
+          bb = x_xd2 + (y - yd)**2
           if (aa + bb == cc) ||
              (bb + cc == aa) ||
              (cc + aa == bb)
