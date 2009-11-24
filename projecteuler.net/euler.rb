@@ -771,8 +771,7 @@ end
 #
 # Ugly brute force, but hey, it works :-)
 # 48sec
-# I should really rework this using bits to represent the side values,
-# this would speed up the check lambda alot
+# I should really rework this using bits, hmm, done so, now down to 12sec
 #
 def problem_90
   # The 'pairs' we need are.
@@ -786,22 +785,30 @@ def problem_90
   # [1] [] with 3/4 slots to fill.  Try all values and check for the correct
   # ones
 
+  bits = [0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x100,0x40] # Note 9 -> 6
+  b146 =       0x02|          0x10|     0x40
+  b0134=  0x01|0x02|     0x08|0x10
+  a_to_bits6 = lambda do |vals,len|
+    vals[0,len].reduce(0) {|a,val| a |= bits[val]}
+  end
+
+
   hits = Hash.new
   num = 0
-  check = lambda do |ai,bi|
+  check = lambda do |aa,bb,ai,bi|
 #    puts ai.inspect
-    aa = ai.dup.map {|v| v == 9 ? 6 : v }
-    bb = bi.dup.map {|v| v == 9 ? 6 : v }
-    if aa.index(0) || bb.index(0)
-      hit = []
-      hit += bb & [1,4,6] if aa.index(0)
-      hit += aa & [1,4,6] if bb.index(0)
+#    bb = a_to_bits6.call(bi)
+    if (aa & 0x01 == 0x01) || (bb & 0x01 == 0x01)
+      hit = 0
+      hit = hit | (bb & b146) if aa & 0x01 == 0x01 # If 0 is set
+      hit = hit | (aa & b146) if bb & 0x01 == 0x01
 
-      if hit.uniq.length == 3 && (aa.index(6) || bb.index(6))
-        hit = []
-        hit += bb & [0,1,3,4] if aa.index(6)
-        hit += aa & [0,1,3,4] if bb.index(6)
-        if hit.uniq.length == 4
+      # Hits and 6's
+      if (hit == b146) && ((aa & 0x40 == 0x40) || (bb & 0x40 == 0x40))
+        hit = 0
+        hit = hit | (bb & b0134) if aa & 0x40 == 0x40
+        hit = hit | (aa & b0134) if bb & 0x40 == 0x40
+        if (hit & b0134) == b0134
           aas = ai.sort
           bbs = bi.sort
           aas,bbs = [aas,bbs].sort
@@ -816,6 +823,8 @@ def problem_90
 
   values = [0,1,2,3,4,5,6,7,8,9]
 
+  a = []
+  b = []
   va0 = values.dup
   vb0 = values.dup
   a[0],b[0] = 2,5
@@ -842,18 +851,22 @@ def problem_90
           a[4] = av4.delete a4
           av4.each do |a5|
             a[5] = a5
+            aa = a_to_bits6.call(a,6)
             vb1.each do |b2|
               bv2 = vb1.dup
               b[2] = bv2.delete b2
               bv2.each do |b3|
                 bv3 = bv2.dup
                 b[3] = bv3.delete b3
+                bb = a_to_bits6.call(b,4)
                 bv3.each do |b4|
                   bv4 = bv3.dup
                   b[4] = bv4.delete b4
+                  bbb = bb | (1 << b4)
                   bv4.each do |b5|
+                    bbbb = bbb | (1 << b5)
                     b[5] = b5
-                    check.call(a,b)
+                    check.call(aa,bbbb,a,b)
                   end
                 end
               end
