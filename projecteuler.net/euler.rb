@@ -765,6 +765,123 @@ def problem_89
   saved
 end
 
+# We are only dealing with [0,1,2,3,4,5,6,8]
+# We only need to solve for
+# [[0,1],[0,4],[0,6],[1,6],[2,5],[3,6],[4,6],[6,4],[8,1]]
+#
+# Ugly brute force, but hey, it works :-)
+# 48sec
+# I should really rework this using bits to represent the side values,
+# this would speed up the check lambda alot
+#
+def problem_90
+  # The 'pairs' we need are.
+  # [2,5] is removed since it always needs to be present, as does
+  # [1,8]
+  # Otherwise we start with [1], [8] and 4 slots to fill
+  # 0 -> 146
+  # 6 -> 0134
+  # We need to add 0 and 6 to each side, then fill in the missing ones
+  # The starting values will be
+  # [1] [] with 3/4 slots to fill.  Try all values and check for the correct
+  # ones
+
+  hits = Hash.new
+  num = 0
+  check = lambda do |ai,bi|
+#    puts ai.inspect
+    aa = ai.dup.map {|v| v == 9 ? 6 : v }
+    bb = bi.dup.map {|v| v == 9 ? 6 : v }
+    if aa.index(0) || bb.index(0)
+      hit = []
+      hit += bb & [1,4,6] if aa.index(0)
+      hit += aa & [1,4,6] if bb.index(0)
+
+      if hit.uniq.length == 3 && (aa.index(6) || bb.index(6))
+        hit = []
+        hit += bb & [0,1,3,4] if aa.index(6)
+        hit += aa & [0,1,3,4] if bb.index(6)
+        if hit.uniq.length == 4
+          aas = ai.sort
+          bbs = bi.sort
+          aas,bbs = [aas,bbs].sort
+          hits[aas] ||= Hash.new
+          hits[aas][bbs] = true
+      #    puts "HIT #{aas.inspect} #{bbs.inspect}"
+          num += 1
+        end
+      end
+    end
+  end
+
+  values = [0,1,2,3,4,5,6,7,8,9]
+
+  va0 = values.dup
+  vb0 = values.dup
+  a[0],b[0] = 2,5
+  va0.delete a[0]
+  vb0.delete b[0]
+  [1,8].each do |a1|
+    va1 = va0.dup
+    vb1 = vb0.dup
+    if a1 == 1
+      a[1],b[1] = 1,8
+    else
+      a[1],b[1] = 8,1
+    end
+    va1.delete a[1]
+    vb1.delete b[1]
+    va1.each do |a2|
+      av2 = va1.dup
+      a[2] = av2.delete a2
+      av2.each do |a3|
+        av3 = av2.dup
+        a[3] = av3.delete a3
+        av3.each do |a4|
+          av4 = av3.dup
+          a[4] = av4.delete a4
+          av4.each do |a5|
+            a[5] = a5
+            vb1.each do |b2|
+              bv2 = vb1.dup
+              b[2] = bv2.delete b2
+              bv2.each do |b3|
+                bv3 = bv2.dup
+                b[3] = bv3.delete b3
+                bv3.each do |b4|
+                  bv4 = bv3.dup
+                  b[4] = bv4.delete b4
+                  bv4.each do |b5|
+                    b[5] = b5
+                    check.call(a,b)
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+  puts "num = #{num}"
+  total = 0
+  hits.each_pair do |d1,v|
+    v.each_key do |d2|
+      total += 1
+#      sixes = d1.select {|n| n == 6}.length
+#      sixes += d2.select {|n| n == 6}.length
+#      if sixes > 0
+#        total += 2 ** sixes
+#      else
+#        total += 1
+#      end
+#      puts "#{d1.inspect} #{d2.inspect} sixes = #{sixes}"
+      puts "#{d1.inspect} #{d2.inspect}"
+    end
+  end
+  puts "total = #{total}"
+end
+
 # hmm... while I am only looking at each possible sequence of characters,
 # I need to make sure to have an efficent way to count the number
 # of permutations that can be made from each number sequence.
@@ -836,7 +953,7 @@ def problem_97
 end
 
 if __FILE__ == $0
-  p problem_89
+  p problem_90
 end
 
 
