@@ -899,8 +899,64 @@ end
 # 90 degrees.
 # A bit of a grunt at 2.3sec, I could probably improve things by caching
 # hits and checking
+# The correct way to do it relates to the fact that point P, if it has a
+# right angle, will have a particular slope, relative to 0,0 - P.  We
+# check for the possible hits on this slope.  This means that for
+# a 50x50 square, we are not solving for all the intermediate values.
+# It was explained as follows
+#
+#   There are three possibilities for right triangles -- either 
+#   the right angle is (0, 0), P, or Q. There are just as many P 
+#   right triangles as Q right angles because the quadrant is 
+#   symmetrical. As for (0, 0) right angles: 
+#  
+#   P must have an x-coordinate of 0, otherwise the 
+#   y-coordinate of Q would have to be less than 0, which is 
+#   impossible. If (0, 0) and P both have an x-coorinate of 
+#   0, then the y-coordinate of Q would have to be 0. So 
+#   for any point P, if you want (0, 0) to be a right angle, 
+#   P would have to have an x-coordinate of 0 and a 
+#   y-coordinate of 1, 2, 3...48, 49, 50, and Q would have 
+#   to have a y-coordinate of 0 and a x-coordinate of 
+#   1, 2, 3...48, 49, 50. So for any P you pick with a 
+#   x-coordinate of 0, you have 50 choices for Q. And you 
+#   have 50 possibilities for P. So in all, you have 
+#   50 * 50, or 2500 possibilites for a (0, 0) right angle. 
+#  
+#   As for P right angles: 
+#  
+#   For any point P you pick, with coordinate (x, y), the 
+#   slope from (0, 0) to P is y / x. For P to be a right 
+#   angle, there needs to be a Q so that the slope from 
+#   P to Q is the opposite as from (0, 0) to P. That means 
+#   that the slope must be -(y / x). So, given P somewhere 
+#   on a 50 * 50 grid, you must then find out how many Qs 
+#   satisfy the conditions: 
+#  
+#   1. The x- and y-coordinates of Q are integers. 
+#   2. The x- and y-coordinates of Q are both 
+#   less than or equal to 50. 
+#   3. The slope from (0, 0) to P is the opposite 
+#   of the slope from P to Q. 
+#  
+#   So to search for numbers that satify these conditions, 
+#   you must first find the simplified slope to (0, 0) to P. 
+#   The simplified slope is y / x. For Q, the slope is then 
+#   - (x / y). So you must go down x units and right y 
+#   units until either x or y is greater than 50, in which 
+#   case every single solution has been found. 
+#  
+#   As for Q right angles: 
+#  
+#   Due to the symmetry of the quadrant, there will be just 
+#   as many Q right angles as P right angles. If every P 
+#   right angle is found, and you find a Q right angle, 
+#   flip the grid along the x-axis and then along the y-axis 
+#   and the triangle will correspond to an already found P 
+#   right triangle.
+#
 def problem_91
-  size = 50
+  size = 500
   hits = 0
   hit = Hash.new
   (1..size).each do |x|
