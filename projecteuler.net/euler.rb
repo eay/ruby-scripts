@@ -1125,6 +1125,36 @@ def problem_97
   p.to_s[-10,10]
 end
 
+def problem_99
+  data = []
+  reduce_num = 100_000
+  reduce_size = reduce_num ** 2
+  open("base_exp.txt").each_line do |line|
+    base,exp = line.chomp.split(/,/).map(&:to_i)
+
+    shift = 0
+    # lets just do this one bit at a time
+    total = 1
+    bits = exp.to_s(2).length-1
+    bits.downto(0) do |i|
+      total = total * total
+      shift *= 2
+      total *= base if exp[i] == 1
+      while total > reduce_size
+        total /= reduce_num
+        shift += reduce_num
+      end
+    end
+    puts "#{$.} total=#{total} shift=#{shift}"
+    data <<[shift,total,$.]
+  end
+  data.sort!
+  puts data[-3].inspect
+  puts data[-2].inspect
+  puts data[-1].inspect
+  data[-1].last
+end
+
 # (x**2-x)/(n**2-n) == 2/1
 # The top/bottom ratios of x/n straddles sqrt(2).
 # So use continious fractions to find the results
@@ -1155,7 +1185,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_94
+  p problem_99
 end
 
 
