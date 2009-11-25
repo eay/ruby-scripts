@@ -1073,6 +1073,36 @@ def problem_93
   end
 end
 
+# I'm not quite sure why, but the m values gets reused every second loop.
+# I noticed the pattern.  I assume it relates to if the side is +1 or
+# -1 relative to the sides.
+# I solved this by using the pythagorian triangles against the
+# right angle triangle that is half the size of the actual triangle.
+#
+def problem_94
+  py = lambda do |m,n|
+    [m*m-n*n,2*n*m,m*m+n*n]
+  end
+
+  m,n,used = 2,1,0
+  t,tt,r = 0,0,nil
+  loop do
+    r = py.call(m,n).sort
+    if (r[2] - r[0]*2).abs == 1
+      tt = r[2]*2 + r[0]*2
+      puts "#{m} #{n} #{r.inspect} circ=#{tt}"
+      used += 1
+      if used == 2
+        n = m
+        used = 0
+      end
+      t += tt
+      return(t-tt) if t > 1_000_000_000
+    end
+    m += 1
+  end
+end
+
 def problem_97
   p = 28433
   shift = 7830457
@@ -1125,7 +1155,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_100
+  p problem_94
 end
 
 
