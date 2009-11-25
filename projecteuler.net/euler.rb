@@ -1095,8 +1095,20 @@ def problem_97
   p.to_s[-10,10]
 end
 
+# (x**2-x)/(n**2-n) == 2/1
+# The top/bottom ratios of x/n straddles sqrt(2).
+# So use continious fractions to find the results
+def problem_100
+  2.sqrt_frac do |top,bot|
+    if top.odd? && bot.odd?
+      x,n = top/2+1,bot/2+1
+      return n if x > 1_000_000_000_000
+    end
+  end
+end
+
 if __FILE__ == $0
-  p problem_93
+  p problem_100
 end
 
 
