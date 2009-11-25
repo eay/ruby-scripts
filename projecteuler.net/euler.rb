@@ -1125,6 +1125,31 @@ def problem_97
   p.to_s[-10,10]
 end
 
+def problem_98
+
+  anagrams = lambda do |tokens|
+    h = {}
+    indexed = tokens.map do |w|
+      a = w.to_s.split(//).sort.join
+      h[a] ||= []
+      h[a] <<= w
+    end
+    ret = h.values.select {|a| a.length > 1}
+  end
+
+  words = open("words.txt").read.tr('"','').split(/,/)
+  word_a   = anagrams.call(words)
+  word_len = word_a.reduce(0) {|a,v| (v[0].length > a) ? v[0].length : a }
+  square_a = []
+  1.upto(Math.sqrt(10**(word_len).to_i)) {|n| square_a << n**2}
+  square_a = anagrams.call(square_a)
+
+  puts word_a.length
+  puts square_a.length
+
+  nil
+end
+
 def problem_99a
   data = []
   reduce_num = 100_000
@@ -1201,7 +1226,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_99
+  p problem_98
 end
 
 
