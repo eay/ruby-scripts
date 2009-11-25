@@ -1098,10 +1098,27 @@ end
 # (x**2-x)/(n**2-n) == 2/1
 # The top/bottom ratios of x/n straddles sqrt(2).
 # So use continious fractions to find the results
+# It is a Diophantine equations, see problem 66
+# Problems of the form X*x - D*Y*Y = 1
+# An explination of how this works from someone else
+#
+#   For this special case I just did some handling: 
+#   S -- number of blue disks 
+#   T -- total number of disks 
+#   (S/T) * (S-1)/(T-1) =1/2 
+#   2S(S-1)-T(T-1)=0 
+#   2(S^2-S+1/4-1/4)-(T^2-T+1/4-1/4)=0 
+#   2(S-1/2)^2-(T-1/2)^2-1/4=0 
+#   substitute u/2=s-1/2, v/2=t-1/2 
+#   2u^2/4-v^2/4-1/4=0 
+#   2u^2-v^2-1=0 
+#   which is your favorite Pell equation.
+#
 def problem_100
   2.sqrt_frac do |top,bot|
     if top.odd? && bot.odd?
       x,n = top/2+1,bot/2+1
+      puts "#{x} / #{n}"
       return n if x > 1_000_000_000_000
     end
   end
