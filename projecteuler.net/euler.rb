@@ -1125,7 +1125,7 @@ def problem_97
   p.to_s[-10,10]
 end
 
-def problem_99
+def problem_99a
   data = []
   reduce_num = 100_000
   reduce_size = reduce_num ** 2
@@ -1147,6 +1147,22 @@ def problem_99
     end
     puts "#{$.} total=#{total} shift=#{shift}"
     data <<[shift,total,$.]
+  end
+  data.sort!
+  puts data[-3].inspect
+  puts data[-2].inspect
+  puts data[-1].inspect
+  data[-1].last
+end
+
+# The floating point way
+def problem_99
+  data = []
+  reduce_num = 100_000
+  reduce_size = reduce_num ** 2
+  open("base_exp.txt").each_line do |line|
+    base,exp = line.chomp.split(/,/).map(&:to_i)
+    data <<[Math.log(base)*exp,$.]
   end
   data.sort!
   puts data[-3].inspect
