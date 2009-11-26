@@ -956,7 +956,7 @@ end
 #   right triangle.
 #
 def problem_91
-  size = 500
+  size = 50
   hits = 0
   hit = Hash.new
   (1..size).each do |x|
@@ -1126,7 +1126,6 @@ def problem_97
 end
 
 def problem_98
-
   anagrams = lambda do |tokens|
     h = {}
     indexed = tokens.map do |w|
@@ -1144,7 +1143,7 @@ def problem_98
   1.upto(Math.sqrt(10**(word_len).to_i)) {|n| square_a << n**2}
   square_a = anagrams.call(square_a)
 
-  puts word_a.length
+  puts word_a.select {|a| a.length > 2}
   puts square_a.length
 
   nil
@@ -1226,7 +1225,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_98
+  p problem_91
 end
 
 
