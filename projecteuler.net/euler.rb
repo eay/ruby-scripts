@@ -1074,17 +1074,14 @@ def problem_93_bad
 end
 
 # Brute force, but works. Remember to reverse div and neg.
+# Urk, we only needed to do 1..9, single digit, read the question
+# in future.
 def problem_93
-  top = 4
   ops = [:"+",:"*",:"/",:"-",[:"/"],[:"-"]]
   max = [2]
-  loop do
-    d = top
-#   (4..top).each do |d|
-    #[d-1,d-2,d-3,d-4,d-5,d-6,d-7,d-8,d/2].each do |c|
-#      c = d - 1
+  (4..9).each do |d|
     (3...d).each do |c|
-      (2...([c,5].min)).each do |b|
+      (2...c).each do |b|
         (1...b).each do |a|
           nums = Array.new(0,nil)
           nums[0] = 1
@@ -1113,7 +1110,6 @@ def problem_93
             end
           end
           num = nums.index(nil) - 1
-          old = max
           new = [num,a,b,c,d]
           if (new <=> max) >= 1
             puts "#{num} => #{a} #{b} #{c} #{d}"
@@ -1122,9 +1118,7 @@ def problem_93
         end
       end
     end
-    break if top > 10
-    puts "top = #{top}"
-    top += 1
+    puts "d = #{d}"
   end
   max[1,4].join.to_i
 end
