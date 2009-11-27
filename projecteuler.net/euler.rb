@@ -1131,21 +1131,99 @@ def problem_98
     indexed = tokens.map do |w|
       a = w.to_s.split(//).sort.join
       h[a] ||= []
-      h[a] <<= w
+      h[a] <<= w.to_s
     end
-    ret = h.values.select {|a| a.length > 1}
+    ret = []
+    h.values.select do |a|
+      len = a.length
+      if len > 1
+        l = a.first.length
+        ret[l] ||= []
+        ret[l] << a
+      end
+    end
+    ret
   end
 
+  # Return [token,mapping_hash]
+  make_mapping = lambda do |token|
+    m = (0..9).to_a
+    h = {}
+    t = token.split(//).map do |c|
+      if h[c]
+        h[c]
+      else
+        h[c] = m.shift
+      end
+    end.join
+    [t,h]
+  end
+
+  map_number = lambda do |token,num|
+    num_a = num.to_s
+    ret = ""
+    at = token.split(//)
+    at.each_index do |idx|
+      ret[idx] = num_a[token[idx].to_i]
+    end
+    ret
+  end
+
+  match_mapping = lambda do |token,mapping,candidate|
+    ret = candidate.split(//).map do |c|
+      if mapping[c]
+        mapping[c]
+      else
+        break
+      end
+    end
+    ret = ret.join if ret
+    ret
+  end
+
+  
+  puts "Load words"
   words = open("words.txt").read.tr('"','').split(/,/)
   word_a   = anagrams.call(words)
-  word_len = word_a.reduce(0) {|a,v| (v[0].length > a) ? v[0].length : a }
+  word_len = word_a.length - 1
+  puts "generate squares"
   square_a = []
   1.upto(Math.sqrt(10**(word_len).to_i)) {|n| square_a << n**2}
   square_a = anagrams.call(square_a)
 
-  puts word_a.select {|a| a.length > 2}
-  puts square_a.length
-
+  # An array of arrays of palindrom pairs
+  word_a.each_index do |len|
+    if word_a[len] && square_a[len]
+      word_a[len].each do |words|
+        squares =square_a[len]
+        # At this point, words is 2 or more anagrams
+        # squares is an array of arrays of 'anagram' square values
+        tmap = nil
+        tokens = []
+        words.each do |w|
+          unless tmap
+            tokens[0],tmap = make_mapping.call(w)
+            puts "mapping = #{tmap.inspect}"
+          else
+            tokens << match_mapping.call(tokens[0],tmap,w)
+          end
+          squares.each do |sqa| # A group of potential matches
+            sqa.each do |sq| # We need to check each number
+              w,nmap = make_mapping.call(sq)
+              if w != tokens[0]
+                ########################
+#                UPTO
+#                puts "#{w} != #{tokens[0]"
+              end
+            end
+          end
+        end
+        puts "#{words.first} #{tokens.inspect} #{words.last}"
+        puts map_number.call(tokens[1],words.first)
+        puts hash.inspect
+      end
+    end
+  end
   nil
 end
 

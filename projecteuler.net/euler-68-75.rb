@@ -244,7 +244,7 @@ def problem_72(num = 1_000_000)
   (2..num).reduce do |a,n|
     puts "#{n} => #{a}" if n % 1000 == 0
     a + n.totient
-  end
+  end - 1
 end
 
 # Given the points a/b and c/d, the median point is p/q = (a+c)/(b+d)

@@ -545,7 +545,7 @@ end
 # What is the total of all the name scores in the file of first names?
 def problem_22
   names = open("names.txt").read.gsub('"','').split(/,/).sort
-  numbers = names.map {|v| v.each_byte.reduce(&:+) - v.length*?@}
+  numbers = names.map {|v| v.each_byte.reduce(&:+) - v.length * ?@.ord}
   total = 0
   numbers.each_index {|i| total += numbers[i] * (i+1)}
   total

@@ -171,7 +171,7 @@ def problem_33
       end
     end
   end
-  puts total
+  total.denominator
 end
 
 def problem_34
@@ -179,7 +179,7 @@ def problem_34
   sum = 0
   (3..(9.factorial*7)).each do |n|
     s = n.to_s
-    num += n if n == s.split(//).reduce(0) {|a,c| a += f[c.to_i]}
+    sum += n if n == s.split(//).reduce(0) {|a,c| a += f[c.to_i]}
   end
   sum
 end
@@ -294,6 +294,6 @@ def problem_40
 end
 
 if __FILE__ == $0
-  p problem_40
+  p problem_24
 end
 
