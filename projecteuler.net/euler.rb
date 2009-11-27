@@ -1032,20 +1032,20 @@ def problem_92
   hit
 end
 
-def problem_93
+def problem_93_bad
   top = 4
   ops = [:"+",:"*",:"/",:"-"]
   max = [2]
   loop do
     d = top
 #   (4..top).each do |d|
-    [d-1,d-2,d-3,d-4,d-5,d-6,d-7,d-8,d/2].each do |c|
-      c = d - 1
-      (2...([c,5].min)).each do |b|
+     (3...d).each do |c| 
+      (2...c).each do |b|
         (1...b).each do |a|
           nums = Array.new(0,nil)
           nums[0] = 1
           [a,b,c,d].permutation do |i0,i1,i2,i3|
+            ops.permutations
             ops.each do |op0|
               r0 = i0.to_f.send(op0,i1.to_f)
               ops.each do |op1|
@@ -1067,10 +1067,66 @@ def problem_93
         end
       end
     end
-    break if top > 10000
+    break if top > 30 
     puts "top = #{top}"
     top += 1
   end
+end
+
+# Brute force, but works. Remember to reverse div and neg.
+def problem_93
+  top = 4
+  ops = [:"+",:"*",:"/",:"-",[:"/"],[:"-"]]
+  max = [2]
+  loop do
+    d = top
+#   (4..top).each do |d|
+    #[d-1,d-2,d-3,d-4,d-5,d-6,d-7,d-8,d/2].each do |c|
+#      c = d - 1
+    (3...d).each do |c|
+      (2...([c,5].min)).each do |b|
+        (1...b).each do |a|
+          nums = Array.new(0,nil)
+          nums[0] = 1
+          [a,b,c,d].permutation do |i0,i1,i2,i3|
+            ops.each do |op0|
+              if Array === op0
+                r0 = i1.to_f.send(op0[0],i0.to_f)
+              else
+                r0 = i0.to_f.send(op0,i1.to_f)
+              end
+              ops.each do |op1|
+                if Array === op1
+                  r1 = i2.send(op1[0],r0.to_f)
+                else
+                  r1 = r0.send(op1,i2.to_f)
+                end
+                ops.each do |op2|
+                  if Array === op2
+                    r2 = i3.send(op2[0],r1.to_f)
+                  else
+                    r2 = r1.send(op2,i3.to_f)
+                  end
+                  nums[r2.to_i] = 1 if r2 > 0 && r2.finite? && r2.floor == r2
+               end
+              end
+            end
+          end
+          num = nums.index(nil) - 1
+          old = max
+          new = [num,a,b,c,d]
+          if (new <=> max) >= 1
+            puts "#{num} => #{a} #{b} #{c} #{d}"
+          end
+          max = [new,max].max
+        end
+      end
+    end
+    break if top > 10
+    puts "top = #{top}"
+    top += 1
+  end
+  max[1,4].join.to_i
 end
 
 # I'm not quite sure why, but the m values gets reused every second loop.
@@ -1303,7 +1359,8 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_91
+  #p problem_98
+  p problem_93
 end
 
 
