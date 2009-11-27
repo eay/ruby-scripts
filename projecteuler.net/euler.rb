@@ -1105,6 +1105,62 @@ def problem_94
   end
 end
 
+# A bit of a brute force effort.  I could perhaps calculate the
+# sum of divisors for all numbers < 1_000_000 in advance by using
+# multiples of primes...
+def problem_95
+  longest = [0,0]
+  max = 1_000_000
+  chain = [1,1]
+  (1...max).each do |n|
+    if c = chain[n]
+      puts "#{n} has chain of #{c}" if c > 2
+      next 
+    end
+    if n.prime? # Goes to '1'
+      chain[n] = 1
+#      puts "#{n} is prime => 1" if n == 12496
+      next
+    end
+
+    m = n
+    nums = [m]
+    loop do
+      m = m.sum_of_divisors
+#      puts "loop for #{m} #{nums.inspect}" if m == 12496
+      if m >= max
+        # Set all numbers to '0'
+        nums.each { |i| chain[i] = 0 }
+        break;
+      end
+#      puts "#{n} => #{chain[m] || 'unknown' }" if m == 12496
+      if chain[m] # We know what happens
+        v = chain[m]
+        if v == -1 # We seen our-self
+          i = nums.rindex(m)
+          v = nums.length - i
+          if v >= longest[0]
+            lchain = nums[i,nums.length]
+            min = lchain.min
+            longest = [v,min,lchain] 
+            puts "new long chain #{longest.inspect}"
+#          puts "-1 hit #{n} => #{v} #{nums.inspect}" if m == 12496
+          end
+        end
+        nums.each { |i| chain[i] = v }
+        puts "#{n} has loop of #{v}" if v > 2
+#        puts "#{n} => #{v} #{nums.inspect}" if m == 12496
+        break
+      else
+        # loop detect
+        nums << m
+        chain[m] = -1
+      end
+    end
+  end
+  longest[1]
+end
+
 def problem_97
   p = 28433
   shift = 7830457
@@ -1319,7 +1375,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_98
+  p problem_95
 end
 
 
