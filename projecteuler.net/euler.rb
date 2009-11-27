@@ -1127,6 +1127,8 @@ def problem_97
   p.to_s[-10,10]
 end
 
+# A bit long and ugly, but hey, it works.
+# Not really hard, just grunt code
 def problem_98
   anagrams = lambda do |tokens|
     h = {}
@@ -1183,7 +1185,6 @@ def problem_98
     ret
   end
 
-  
   puts "Load words"
   words = open("words.txt").read.tr('"','').split(/,/)
   word_a   = anagrams.call(words)
@@ -1193,38 +1194,42 @@ def problem_98
   1.upto(Math.sqrt(10**(word_len).to_i)) {|n| square_a << n**2}
   square_a = anagrams.call(square_a)
 
-  # An array of arrays of palindrom pairs
+  max = 0
+  # An array of arrays of anagram pairs
   word_a.each_index do |len|
     if word_a[len] && square_a[len]
       word_a[len].each do |words|
-        puts "Work on "#{words.inspect}"
+#        puts "Work on "#{words.inspect}"
         squares =square_a[len]
-        puts "#{squares.length} panindomic square sets"
+#        puts "#{squares.length} anagramic square sets"
         # At this point, words is 2 or more anagrams
         # squares is an array of arrays of 'anagram' square values
         tokens = []
         words.each do |w|
           tokens[0],tmap = make_mapping.call(w)
-          puts "mapping = #{tmap.inspect}"
+#          puts "mapping = #{tmap.inspect}"
           words2 = words.dup
           words2.delete w
           words2.each do |w2|
             tokens << match_mapping.call(tmap,w2)
           end
-          puts "tokens = #{tokens.inspect}"
+#          puts "tokens = #{tokens.inspect}"
           squares.each do |sqa| # A group of potential matches
+            # For each one do a mapping
             sqa_token,nmap = make_mapping.call(sqa.first)
+            # next if multiple characters don't match
             next if sqa_token != tokens[0]
-#            XXXXXXXXXXXXXXXXXXXXXXXXXX
 
-
+            sqb = sqa.dup
+            sqb.delete sqa.first
             # Map all squares via this mapping
-            sqa_mapped = sqa.map { |s| match_mapping.call(nmap,s) }
+            sqb_mapped = sqb.map { |s| match_mapping.call(nmap,s) }
 #            puts "Base   => #{sqa.inspect}"
-            puts "Mapped => #{sqa_mapped.inspect}"
+#            puts "Mapped => #{sqb_mapped.inspect}"
             tokens[1...tokens.length].each do |t|
-              if i = sqa_mapped.index(t)
-                puts "HIT on #{words.inspect} with #{sqa.inspect} #{Math::sqrt(sqa[i].to_i).to_i}"
+              if i = sqb_mapped.index(t)
+                puts "HIT on #{words.inspect} with #{sqa.first} - #{sqb.inspect} #{Math::sqrt(sqb[i].to_i).to_i}"
+                max = [max,sqa.first.to_i,sqb[i].to_i].max
               end
             end
           end
@@ -1235,7 +1240,7 @@ def problem_98
       end
     end
   end
-  nil
+  max
 end
 
 def problem_99a
