@@ -1166,12 +1166,12 @@ def problem_98
     ret = ""
     at = token.split(//)
     at.each_index do |idx|
-      ret[idx] = num_a[token[idx].to_i]
+      ret[idx] = num_a[token[idx,1].to_i]
     end
     ret
   end
 
-  match_mapping = lambda do |token,mapping,candidate|
+  match_mapping = lambda do |mapping,candidate|
     ret = candidate.split(//).map do |c|
       if mapping[c]
         mapping[c]
@@ -1197,32 +1197,41 @@ def problem_98
   word_a.each_index do |len|
     if word_a[len] && square_a[len]
       word_a[len].each do |words|
+        puts "Work on "#{words.inspect}"
         squares =square_a[len]
+        puts "#{squares.length} panindomic square sets"
         # At this point, words is 2 or more anagrams
         # squares is an array of arrays of 'anagram' square values
-        tmap = nil
         tokens = []
         words.each do |w|
-          unless tmap
-            tokens[0],tmap = make_mapping.call(w)
-            puts "mapping = #{tmap.inspect}"
-          else
-            tokens << match_mapping.call(tokens[0],tmap,w)
+          tokens[0],tmap = make_mapping.call(w)
+          puts "mapping = #{tmap.inspect}"
+          words2 = words.dup
+          words2.delete w
+          words2.each do |w2|
+            tokens << match_mapping.call(tmap,w2)
           end
+          puts "tokens = #{tokens.inspect}"
           squares.each do |sqa| # A group of potential matches
-            sqa.each do |sq| # We need to check each number
-              w,nmap = make_mapping.call(sq)
-              if w != tokens[0]
-                ########################
-#                UPTO
-#                puts "#{w} != #{tokens[0]"
+            sqa_token,nmap = make_mapping.call(sqa.first)
+            next if sqa_token != tokens[0]
+#            XXXXXXXXXXXXXXXXXXXXXXXXXX
+
+
+            # Map all squares via this mapping
+            sqa_mapped = sqa.map { |s| match_mapping.call(nmap,s) }
+#            puts "Base   => #{sqa.inspect}"
+            puts "Mapped => #{sqa_mapped.inspect}"
+            tokens[1...tokens.length].each do |t|
+              if i = sqa_mapped.index(t)
+                puts "HIT on #{words.inspect} with #{sqa.inspect} #{Math::sqrt(sqa[i].to_i).to_i}"
               end
             end
           end
         end
-        puts "#{words.first} #{tokens.inspect} #{words.last}"
-        puts map_number.call(tokens[1],words.first)
-        puts hash.inspect
+#        puts "#{words.first} #{tokens.inspect} #{words.last}"
+#        puts map_number.call(tokens[1],words.first)
+#        puts hash.inspect
       end
     end
   end
@@ -1305,8 +1314,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  #p problem_98
-  p problem_93
+  p problem_98
 end
 
 
