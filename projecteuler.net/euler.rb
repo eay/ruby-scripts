@@ -1108,10 +1108,14 @@ end
 # A bit of a brute force effort.  I could perhaps calculate the
 # sum of divisors for all numbers < 1_000_000 in advance by using
 # multiples of primes...
+# First version 6m1s
+# Second version uses an array of sum_of_divisors, stolen from
+# the solutions by other people, 26sec
 def problem_95
   longest = [0,0]
   max = 1_000_000
   chain = [1,1]
+  s_of_d = Integer.sum_of_divisors_upto(max)
   (1...max).each do |n|
     if c = chain[n]
       puts "#{n} has chain of #{c}" if c > 2
@@ -1126,7 +1130,8 @@ def problem_95
     m = n
     nums = [m]
     loop do
-      m = m.sum_of_divisors
+      #m = m.sum_of_divisors
+      m = s_of_d[m]
 #      puts "loop for #{m} #{nums.inspect}" if m == 12496
       if m >= max
         # Set all numbers to '0'

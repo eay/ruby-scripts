@@ -216,8 +216,8 @@ class Integer
   end
 
   # Return all the divisors for the number
-  def divisors
-    fac = Primes.factors(self)
+  def self.divisors(fac)
+    #fac = Primes.factors(self)
     div = {1 => true}
     (1..fac.length).each do |n|
       fac.combination(n) do |a|
@@ -227,8 +227,33 @@ class Integer
     div.keys.sort
   end
 
+  def divisors
+    self.class.divisors(Primes.factors(self))
+  end
+
   def sum_of_divisors
     divisors.reduce(-self,&:+)
+  end
+
+  # Pass in the factors
+  def self.sum_of_divisors(fac)
+    sum = fac.reduce(1,&:"*")
+    puts sum
+    self.divisors(fac).reduce(-sum,&:+)
+  end
+
+  # Return an array of the sum of divisors upto 'n'
+  def self.sum_of_divisors_upto(n)
+    ret = Array.new(n+1,1)
+    # for each number
+    2.upto(n) do |i|
+      # we iterate over it's multiples, adding it's value as the
+      # number of additional divisors.  A kind of sieve.
+      (i+i).step(n,i) do |j|
+        ret[j] += i
+      end
+    end
+    ret
   end
 
   # Return Euler's totient, or the number of number of positive integers
