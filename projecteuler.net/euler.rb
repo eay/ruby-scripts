@@ -1118,12 +1118,12 @@ def problem_95
   s_of_d = Integer.sum_of_divisors_upto(max)
   (1...max).each do |n|
     if c = chain[n]
-      puts "#{n} has chain of #{c}" if c > 2
+#      puts "#{n} has chain of #{c}"
       next 
     end
     if n.prime? # Goes to '1'
       chain[n] = 1
-#      puts "#{n} is prime => 1" if n == 12496
+#      puts "#{n} is prime => 1"
       next
     end
 
@@ -1132,13 +1132,13 @@ def problem_95
     loop do
       #m = m.sum_of_divisors
       m = s_of_d[m]
-#      puts "loop for #{m} #{nums.inspect}" if m == 12496
+#      puts "loop for #{m} #{nums.inspect}"
       if m >= max
         # Set all numbers to '0'
         nums.each { |i| chain[i] = 0 }
         break;
       end
-#      puts "#{n} => #{chain[m] || 'unknown' }" if m == 12496
+#      puts "#{n} => #{chain[m] || 'unknown' }"
       if chain[m] # We know what happens
         v = chain[m]
         if v == -1 # We seen our-self
@@ -1147,14 +1147,16 @@ def problem_95
           if v >= longest[0]
             lchain = nums[i,nums.length]
             min = lchain.min
-            longest = [v,min,lchain] 
-            puts "new long chain #{longest.inspect}"
-#          puts "-1 hit #{n} => #{v} #{nums.inspect}" if m == 12496
+            if min != longest[1]
+              longest = [v,min,lchain] 
+              puts "new long chain #{longest.inspect}"
+            end
+#          puts "-1 hit #{n} => #{v} #{nums.inspect}"
           end
         end
         nums.each { |i| chain[i] = v }
-        puts "#{n} has loop of #{v}" if v > 2
-#        puts "#{n} => #{v} #{nums.inspect}" if m == 12496
+#        puts "#{n} has loop of #{v}" if v > 2
+#        puts "#{n} => #{v} #{nums.inspect}"
         break
       else
         # loop detect
