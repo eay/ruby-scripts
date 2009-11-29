@@ -1168,6 +1168,103 @@ def problem_95
   longest[1]
 end
 
+# A simple recusive solver, I could probably optimise quite a bit
+# by not doing a full 'check for number of possibilites for all squares',
+# but at 4.5sec I can live with it.
+def problem_96
+  # convert an array of 81 numbers into an array of 81 arrays with
+  # nil or 1-9 in each slot
+  def import(su)
+    h = Array.new(9) { |i| Array.new }
+    v = Array.new(9) { |i| Array.new }
+    s = Array.new(9) { |i| Array.new }
+    ret = su.map do |i|
+      (i == 0) ? [ nil ] : [ i ]
+    end
+    nines = Array.new(81)
+    ret.each_with_index do |obj,i|
+      x,y = i % 9, i / 9
+      n = x / 3 + (y/3*3)
+      #puts obj.inspect
+      h[y] << obj
+      v[x] << obj
+      s[n] << obj
+      #puts h[y].inspect
+      #puts "#{h[0].inspect} #{v[0].inspect} #{s[0].inspect}"
+      nines[i] = [h[y],v[x],s[n]]
+    end
+    [ret,nines]
+  end
+
+  def export(grid)
+    r = grid.map { |v| v[0] || 0 }
+  end
+
+  def solve(grid,nines)
+    # What values are possible in the passed 'nines' entry
+    numbers = (1..9).to_a
+    possible = lambda do |n|
+      numbers - (n[0].flatten | n[1].flatten | n[2].flatten).compact
+    end
+
+    loop do
+      empty = []
+      grid.each_with_index do |g,i|
+        empty << [i, g ,possible.call(nines[i])] if g[0] == nil
+      end
+      return grid if empty.length == 0
+
+      # unable to solve?
+      if empty.index {|e| e[2].length == 0}
+        return false
+      end
+
+      j = empty.index {|e| e[2].length == 1}
+      if j
+        i,g,pos = empty[j]
+        # Set the grid array value to the solutuon
+        g[0] = pos[0]
+        #puts "solve #{pos[0]} at (#{i%9},#{i/9}) #{empty.length - 1} remaining"
+        empty.delete_at j
+      else
+        # Unable to solve right now, we need to recurse
+        m = empty.min {|a,b| a[2].length <=> b[2].length }
+        # We try each possible solution for the smallest set of guesses
+        #puts "try each of #{m[2].inspect}"
+        save = export(grid)
+        m[2].each do |try|
+          save[m[0]] = try
+          #puts "try #{try} at (#{m[0]%9},#{m[0]/9})"
+          ret = solve(*import(save))
+          return ret if ret
+        end
+        return false
+      end
+    end
+  end
+
+  # first entry is nul
+  data = open("sudoku.txt").read.split(/Grid \d*/)
+  data.shift
+  sudokus = data.map do |a|
+     import(a.gsub(/\D+/,"").split(//).map(&:to_i))
+  end
+
+  sudoku_number = 1
+  sum = 0
+  sudokus.each do |grid,nines|
+    if ret = solve(grid,nines)
+      n = ret[0][0] * 100 + ret[1][0] * 10 + ret[2][0]
+      puts "SOLVED #{sudoku_number} => #{n}"
+      sum += n
+    else
+      puts "UNABLE TO SOLVE #{sudoku_number}"
+    end
+    sudoku_number += 1
+  end
+  sum
+end
+
 def problem_97
   p = 28433
   shift = 7830457
@@ -1382,7 +1479,7 @@ def problem_100
 end
 
 if __FILE__ == $0
-  p problem_95
+  p problem_96
 end
 
 
