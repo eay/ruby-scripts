@@ -1171,6 +1171,7 @@ end
 # A simple recusive solver, I could probably optimise quite a bit
 # by not doing a full 'check for number of possibilites for all squares',
 # but at 4.5sec I can live with it.
+# UPDATE, 2.6sec in 62 lines of code.
 def problem_96
   # convert an array of 81 numbers into an array of 81 arrays with
   # nil or 1-9 in each slot
@@ -1178,9 +1179,7 @@ def problem_96
     h = Array.new(9) { |i| Array.new }
     v = Array.new(9) { |i| Array.new }
     s = Array.new(9) { |i| Array.new }
-    ret = su.map do |i|
-      (i == 0) ? [ nil ] : [ i ]
-    end
+    ret = su.map { |i| (i == 0) ? [nil] : [i] }
     nines = Array.new(81)
     ret.each_with_index do |obj,i|
       x,y = i % 9, i / 9
@@ -1194,10 +1193,6 @@ def problem_96
       nines[i] = [h[y],v[x],s[n]]
     end
     [ret,nines]
-  end
-
-  def export(grid)
-    r = grid.map { |v| v[0] || 0 }
   end
 
   def solve(grid,nines)
@@ -1215,23 +1210,22 @@ def problem_96
       return grid if empty.length == 0
 
       # unable to solve?
-      if empty.index {|e| e[2].length == 0}
-        return false
-      end
+      return false if empty.index {|e| e[2].length == 0}
 
-      j = empty.index {|e| e[2].length == 1}
-      if j
-        i,g,pos = empty[j]
-        # Set the grid array value to the solutuon
-        g[0] = pos[0]
-        #puts "solve #{pos[0]} at (#{i%9},#{i/9}) #{empty.length - 1} remaining"
-        empty.delete_at j
+      j = empty.select {|e| e[2].length == 1}
+      if j.length >= 1
+        j.each do |i,g,pos|
+          # Make sure the last setting did not make the problem unsolvable
+          return false if possible.call(nines[i]) != pos
+          # Set the grid array value to the solutuon
+          g[0] = pos[0]
+        end
       else
         # Unable to solve right now, we need to recurse
         m = empty.min {|a,b| a[2].length <=> b[2].length }
         # We try each possible solution for the smallest set of guesses
         #puts "try each of #{m[2].inspect}"
-        save = export(grid)
+        save = grid.map { |v| v[0] || 0 }
         m[2].each do |try|
           save[m[0]] = try
           #puts "try #{try} at (#{m[0]%9},#{m[0]/9})"
