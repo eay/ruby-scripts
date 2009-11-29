@@ -1172,6 +1172,8 @@ end
 # by not doing a full 'check for number of possibilites for all squares',
 # but at 4.5sec I can live with it.
 # UPDATE, 2.6sec in 62 lines of code.
+# See http://www.paulspages.co.uk/sudoku/howtosolve/
+# for how to solve them with logic
 def problem_96
   # convert an array of 81 numbers into an array of 81 arrays with
   # nil or 1-9 in each slot
@@ -1237,12 +1239,23 @@ def problem_96
     end
   end
 
-  # first entry is nul
-  data = open("sudoku.txt").read.split(/Grid \d*/)
-  data.shift
-  sudokus = data.map do |a|
-     import(a.gsub(/\D+/,"").split(//).map(&:to_i))
+  # Set to false to try sudokus that only have 17 initial entries
+  # but can all be solved by logic. It takes 6m30s
+  if true 
+    # first entry is nul
+    data = open("sudoku.txt").read.split(/Grid \d*/)
+    data.shift
+    sudokus = data.map do |a|
+       import(a.gsub(/\D+/,"").split(//).map(&:to_i))
+    end
+  else
+    sudokus = []
+    data = open("sudoku17.txt").each do |line|
+      sudokus << import(line.chomp.split(//).map(&:to_i))
+    end
   end
+
+  puts "start"
 
   sudoku_number = 1
   sum = 0
