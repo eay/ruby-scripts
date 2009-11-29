@@ -1174,6 +1174,7 @@ end
 # UPDATE, 2.6sec in 62 lines of code.
 # See http://www.paulspages.co.uk/sudoku/howtosolve/
 # for how to solve them with logic
+# Clean-up the possible lambda function, 1.75sec
 def problem_96
   # convert an array of 81 numbers into an array of 81 arrays with
   # nil or 1-9 in each slot
@@ -1201,7 +1202,7 @@ def problem_96
     # What values are possible in the passed 'nines' entry
     numbers = (1..9).to_a
     possible = lambda do |n|
-      numbers - (n[0].flatten | n[1].flatten | n[2].flatten).compact
+      numbers - (n[0] + n[1] + n[2]).flatten
     end
 
     loop do
@@ -1240,7 +1241,7 @@ def problem_96
   end
 
   # Set to false to try sudokus that only have 17 initial entries
-  # but can all be solved by logic. It takes 6m30s
+  # but can all be solved by logic. It takes 4m42s
   if true 
     # first entry is nul
     data = open("sudoku.txt").read.split(/Grid \d*/)
