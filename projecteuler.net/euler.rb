@@ -7,12 +7,18 @@ require 'polynomial.rb'
 def problem_101
   final = Polynomial.new [1,-1,1,-1,1,-1,1,-1,1,-1,1]
   terms = final.terms
-  puts final
 
-  1.upto(terms.length).each do |len|
-    p = Polynomial.new(terms[0,len])
-    (1..10).each {|i| puts p.f(i) }
-  end
+#  puts Polynomial.optimum_solution(1).to_s
+#  puts Polynomial.optimum_solution(9).to_s
+#  puts Polynomial.optimum_solution(1,8).to_s
+  puts Polynomial.optimum_solution(1,8,27).to_s
+#  puts Polynomial.optimum_solution(1,8,15,64).to_s
+
+
+#  1.upto(terms.length).each do |len|
+#    p = Polynomial.new(terms[0,len])
+#    (1..10).each {|i| puts p.f(i) }
+#  end
 
   nil
 end
