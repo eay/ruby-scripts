@@ -95,7 +95,7 @@ def problem_27
 end
 
 def problem_28(num = 1001)
-  rings = (num-1)/2 # Must be odd size
+#  rings = (num-1)/2 # Must be odd size
   (1..(num-1)/2).reduce(1) do |a,n|
     a + (4*n+2)**2 - 12*n
   end
@@ -294,6 +294,6 @@ def problem_40
 end
 
 if __FILE__ == $0
-  p problem_24
+  p problem_28
 end
 
