@@ -3,6 +3,7 @@
 require 'primes.rb'
 require 'groupings.rb'
 require 'polynomial.rb'
+require 'point.rb'
 
 # Some-one elses solution
 # Lagrange Interpolation
@@ -34,16 +35,50 @@ def problem_101
   sum
 end
 
+# A Simple case of checking that the angle to the (0,0) is inside
+# the angle to the other 2 points for all three points.
 def problem_102
   triangles = []
   open("triangles.txt").each_line do |l|
     triangles << l.chomp.split(/,/).map(&:to_i)
   end
   puts triangles.length
+
+  count = 0
+  o = Point::Origin
+  triangles.each do |p|
+    p1 = Point.new(p[0],p[1])
+    p2 = Point.new(p[2],p[3])
+    p3 = Point.new(p[4],p[5])
+
+    if p2.between(p1,o,p3) &&
+       p1.between(p2,o,p3) &&
+       p3.between(p1,o,p2)
+      count += 1
+    end
+  end
+  count
+end
+
+def problem_108
+  n = 4
+  q = nil
+  loop do
+    Primes.each do |p|
+      x = p * n
+
+      
+    
+      q = p
+      n += 1
+      break if n >= 1000
+    end
+    break
+  end
 end
 
 if __FILE__ == $0
-  p problem_101
+  p problem_102
 end
 
 
