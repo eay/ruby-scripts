@@ -57,7 +57,7 @@ class Polynomial
         sign,m = "-","#{m.abs.to_s}*"
       when 1
         sign,m = "+",nil
-      when m > 0
+      else # m > 0
         sign,m = "+","#{m.abs.to_s}*"
       end
       r += " #{sign} " unless r == "" && sign == "+"
@@ -67,52 +67,58 @@ class Polynomial
     r.strip
   end
 
+  # This does not work for non-integer solutions, I belive this is called
+  # Neville's algorithm
+  # Also look at Lagrange polynomials
   def self.optimum_solution(*kval)
+    kval.flatten!
     return new(kval) if kval.length == 1
-    puts "k_len = #{kval.length}"
+#    puts "k_len = #{kval.length}"
     pn = Array.new(kval.length) do |i|
-      n = []
+      n = [kval[i]]
       0.upto(kval.length-1) do |power|
         n << (i+1) ** power
       end
       n
     end
 
-    puts pn.inspect
-
-    ans = kval.dup
+    eqn = []
     loop do
-      puts "do loop"
       # Get the first set of values and remove the top term
-      puts "pn = #{pn.inspect}"
+      eqn << pn.map {|a| a.dup }
       p0 = pn.shift
-      puts "p0 = #{p0.inspect}"
-      puts "pn = #{pn.inspect}"
-      a0 = ans.shift
       top = p0.rindex {|v| v.abs > 0}
-      puts "top = #{top} a0 = #{a0}"
-      break unless top && top > 0
+      break unless top && top > 1
       p0_mul = p0[top]
-      puts "p0_mul = #{p0_mul}"
 
-      new_pn = []
+      # Index 0 is the kval
       pn.each_with_index do |p,i|
         p_mul = p[top]
-        ans[i] = ans[i] * p0_mul - a0 * p_mul
-        puts "p0_mul = #{p0_mul} p_mul = #{p_mul} ans = #{ans[i]}"
         p.each_index do |j|
-          print "#{i} #{j}| #{p[j]} * #{p0_mul} - #{p0[j]} * #{p_mul} => "
           p[j] = p[j] * p0_mul - p0[j] * p_mul
-          puts p[j]
         end
-        puts " #{ans[i]} == #{p.inspect}"
-        new_pn << p
       end
-
-      puts "---"
-      puts pn.inspect
-      puts ans.inspect
     end
+
+#    eqn.each {|e| puts "eqn #{e.inspect}" }
+    #  We now have the solution for the first term and can work our way back
+    #  up 'eqn', also checking that the answers are valid
+    index = 1
+    ans = []
+    eqn.reverse.each do |sols|
+      s = sols.first
+#      puts "--#{s.inspect}"
+      ans.each_with_index do |n,i|
+        s[0] -= s[i+1]*n
+        s[i+1] = 0
+      end
+#      puts s.inspect
+      ans[index-1] = s[0] / s[index]
+      index += 1
+    end
+    ans.pop while ans.last == 0
+#    puts "ans = #{ans.inspect}"
+    new ans
   end
 
   private

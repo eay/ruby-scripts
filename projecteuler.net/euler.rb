@@ -4,23 +4,34 @@ require 'primes.rb'
 require 'groupings.rb'
 require 'polynomial.rb'
 
+# Some-one elses solution
+# Lagrange Interpolation
+# def getnext(s,max)
+#   (max-1).downto(0){|c|(0..c).each {|i| s[i]=s[i+1]-s[i]}}
+#   s[0..max].inject(0){|sum,i| sum+i}
+# end
+#                  
+# seq=(1..11).map {|i| i**10-i**9+i**8-i**7+i**6-i**5+i**4-i**3+i**2-i+1 }
+# puts (0..9).inject(0){|s,i| s+getnext(seq.clone,i)}
+#
 def problem_101
   final = Polynomial.new [1,-1,1,-1,1,-1,1,-1,1,-1,1]
   terms = final.terms
 
-#  puts Polynomial.optimum_solution(1).to_s
-#  puts Polynomial.optimum_solution(9).to_s
-#  puts Polynomial.optimum_solution(1,8).to_s
-  puts Polynomial.optimum_solution(1,8,27).to_s
-#  puts Polynomial.optimum_solution(1,8,15,64).to_s
+  # The number sequence
+  seq = (1..final.terms.length).map {|n| final.evaluate(n) }
 
-
-#  1.upto(terms.length).each do |len|
-#    p = Polynomial.new(terms[0,len])
-#    (1..10).each {|i| puts p.f(i) }
-#  end
-
-  nil
+  sum = 0
+  1.upto(seq.length).each do |len|
+#    puts "---\n#{seq[0,len].inspect}"
+    p = Polynomial.optimum_solution(seq[0,len])
+    break if p.terms ==  final.terms
+#    puts p.terms.inspect
+    bop = p.f(len+1)
+    puts bop
+    sum += bop
+  end
+  sum
 end
 
 def problem_102
