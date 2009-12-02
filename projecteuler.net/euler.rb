@@ -37,6 +37,15 @@ end
 
 # A Simple case of checking that the angle to the (0,0) is inside
 # the angle to the other 2 points for all three points.
+#
+# Another solution was to see if the area of the three (0,0) triangles
+# equals the area of the origional triangle.
+#
+# Another solution was that angles A0B, B0C, C0A must all be <= 180 degrees.
+#
+# One line must intersect the y-axis above, one must below, the other
+# must not at all.
+#
 def problem_102
   triangles = []
   open("triangles.txt").each_line do |l|
@@ -60,6 +69,63 @@ def problem_102
   count
 end
 
+def problem_103
+  a1 = [11,18,19,20,22,25]
+  a = [20] + a1.map {|t| t+20}
+  # a is the starting point
+  puts a.inspect
+  a_max = 25
+  b0 = a[0]
+  num = 0
+  (a[0]+1).upto(a[1]).each do |b1|
+    (b1+1).upto(a[2]).each do |b2|
+      (b2+1).upto(a[3]).each do |b3|
+        (b3+1).upto(a[4]).each do |b4|
+          (b4+1).upto(a[5]).each do |b5|
+            (b5+1).upto(a[6]).each do |b6|
+              puts [b0,b1,b2,b3,b4,b5,b6].inspect
+              num += 1
+            end
+          end
+        end
+      end
+    end
+  end
+  num
+end
+
+# A bit of a brute force, 8 seconds, so not too bad.  It could probably
+# be improved in the number to string conversion
+def problem_104
+  all = ["1","2","3","4","5","6","7","8","9"]
+  k = 2
+  low_fn0,low_fn1 = 1,1
+  hi_fn0,hi_fn1 =   1,1
+  loop do
+    k += 1
+    low_fn0,low_fn1 =(low_fn0 + low_fn1) % 10_000_000_000, low_fn0
+    hi_fn0, hi_fn1  = hi_fn0 +  hi_fn1,  hi_fn0
+    if hi_fn0 > 1_000_000_000_000_000_000
+      hi_fn0 /= 10
+      hi_fn1 /= 10
+    end
+    front = false
+    next unless k > 300
+    hi  = hi_fn0.to_s[0,9].split(//)
+    if (hi & all).length == 9
+      puts "front #{k}" 
+      front = true
+    end
+    if (low = low_fn0.to_s).length >= 9
+      low = low[-9,9].split(//)
+      if (low & all).length == 9
+        puts "back  #{k}" 
+        return k if front
+      end
+    end
+  end
+end
+
 def problem_108
   n = 4
   q = nil
@@ -78,7 +144,7 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_102
+  p problem_104
 end
 
 

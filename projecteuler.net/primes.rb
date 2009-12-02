@@ -227,7 +227,7 @@ class Integer
     div.keys.sort
   end
 
-  def divisors
+  def divisors(fac = Primes.factors(self))
     self.class.divisors(Primes.factors(self))
   end
 
