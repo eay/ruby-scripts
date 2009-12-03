@@ -893,6 +893,7 @@ def problem_90
     end
   end
   puts "total = #{total}"
+  total
 end
 
 # Quite simple, just walk the edges checking to see any of the angles are

@@ -536,6 +536,7 @@ def problem_21(num = 9_999)
     sod = n.sum_of_divisors
     next if n >= sod
     if n == sod.sum_of_divisors
+      puts "#{n} #{sod}"
       sum += n + sod # The other will be picked up later
     end
   end
@@ -579,6 +580,6 @@ def problem_23
 end
 
 if __FILE__ == $0
-  p problem_23
+  p problem_21
 end
 

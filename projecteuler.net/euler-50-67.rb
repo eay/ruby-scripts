@@ -351,14 +351,14 @@ def problem_59
 end
 
 # 26033 ["13", "5197", "5701", "6733", "8389"]
-# No array, but slower than problem_60a
+# No array, but slower than problem_60
 # This caused me lots of problems.  The main issue was given 2 primes that
 # pair, how do we check their common pairings?  In this case I simply
 # make sure they have more than num_cut common elements, then re-check
 # all of them (all permutations).  I'm not totaly sure if the case can
 # occur where the 2 numbers share 6 elements but only 5 are good for
 # the solution.  The permutate code would fail in this case.
-def problem_60
+def problem_60a
   num_cut = 5
 # simple
   pairs = {}
@@ -403,7 +403,7 @@ def problem_60
 end
 
 # 26033 ["13", "5197", "5701", "6733", "8389"]
-def problem_60a
+def problem_60
   prime_check = lambda do |a,b|
     (a + b).to_i.prime? && (b + a).to_i.prime?
   end
@@ -647,6 +647,6 @@ def problem_67
 end
 
 if __FILE__ == $0
-  p problem_66
+  p problem_60
 end
 

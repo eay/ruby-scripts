@@ -206,7 +206,7 @@ def problem_70
       end
     end
   end
-  min
+  min.last
 end
 
 # Quite simple, start with the biggest allowable fraction
@@ -227,7 +227,7 @@ def problem_71
       while (g = n.gcd(d)) != 1
         n,d = n/g, d/g
       end
-      return [n,d]
+      return n #[n,d]
     else # d is too big
       d -= 1
     end
@@ -241,8 +241,9 @@ end
 # ruby1.9   3m00s
 # 303963552391
 def problem_72(num = 1_000_000)
+  puts "this will take some time..."
   (2..num).reduce do |a,n|
-    puts "#{n} => #{a}" if n % 1000 == 0
+    puts "#{n} => #{a}" if n % 10000 == 0
     a + n.totient
   end - 1
 end
@@ -374,11 +375,10 @@ def problem_75
   end
   puts hits.length
   h = hits.select {|k,v| v.length == 1}
-  puts h.length
   h.length
 end
 
 if __FILE__ == $0
-  p problem_73
+  p problem_75
 end
 

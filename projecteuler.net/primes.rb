@@ -216,8 +216,7 @@ class Integer
   end
 
   # Return all the divisors for the number
-  def self.divisors(fac)
-    #fac = Primes.factors(self)
+  def self.divisors(fac = Primes.factors(self))
     div = {1 => true}
     (1..fac.length).each do |n|
       fac.combination(n) do |a|
