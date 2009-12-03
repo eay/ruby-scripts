@@ -69,9 +69,19 @@ def problem_102
   count
 end
 
+# 1) No combination of elements can be equal
+# 2) More elements means bigger sum.
+# From 1), all but S.min are greater than (S.max - S.min)
+# Differences must be 1, 1, 2, 3, (4 or 5 or prime > 3?)
+#
+# From 2), smallest element must be > diff between set of n hi and
+# n low.
+# 20 + 31 + 38 + 39 == 128
+# 40 + 42 + 45      == 127
 def problem_103
-  a1 = [11,18,19,20,22,25]
-  a = [20] + a1.map {|t| t+20}
+  # a1 = [11,18,19,20,22,25]
+  # a = [20] + a1.map {|t| t+20}
+  a = [20, 31, 38, 39, 40, 42, 45]
   # a is the starting point
   puts a.inspect
   a_max = 25
@@ -144,7 +154,7 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_104
+  p problem_103
 end
 
 
