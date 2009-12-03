@@ -78,12 +78,36 @@ end
 # n low.
 # 20 + 31 + 38 + 39 == 128
 # 40 + 42 + 45      == 127
+#
+# From 1) consider the non-first elements as
+# 0, 7, 8, 9, 11, 14
+# or 15 vs 34
+# 11, 18, 19, 20, 22, 25
+# so 48 vs 67
+#
+# 11,17,20,22,23,24 - 48 vs 47 - 6, 9,11,14,15
+# 11,18,19,20,22,25 - 48 vs 47 - 7, 8, 9,11,14
+#
+# Rule 1) 
 def problem_103
-  # a1 = [11,18,19,20,22,25]
+
+  rule1 = lambda do |a|
+    low_sum = a[0,(a.length+1)/2].reduce(&:+)
+    len = (a.length - 1)/2
+    hi_sum  = a[-len,len].reduce(&:+)
+    puts "#{low_sum} > #{hi_sum}"
+    low_sum > hi_sum
+  end
+
+  a1 = [11,18,19,20,22,25]
+  puts a1.inspect
+  puts rule1.call(a1)
   # a = [20] + a1.map {|t| t+20}
   a = [20, 31, 38, 39, 40, 42, 45]
   # a is the starting point
   puts a.inspect
+  puts rule1.call(a)
+  exit
   a_max = 25
   b0 = a[0]
   num = 0
@@ -154,7 +178,36 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_103
+#  p problem_103
 end
 
 
+puts [81, 88, 75, 42, 87, 84, 86, 65].sort.inspect
+puts [157, 150, 164, 119, 79, 159, 161, 139, 158].sort.inspect
+
+a = [42, 65, 75, 81, 84, 86, 87, 88]
+b = [79, 119, 139, 150, 157, 158, 159, 161, 164]
+
+rule1 = lambda do |a|
+  low_sum = a[0,(a.length+1)/2].reduce(&:+)
+  len = (a.length - 1)/2
+  hi_sum  = a[-len,len].reduce(&:+)
+  puts "#{low_sum} > #{hi_sum}"
+  low_sum > hi_sum
+end
+
+rule2 = lambda do |a|
+  if a.uniq == a
+    new = []
+    a.each_cons(2) {|x,y| new << y - x}
+    puts "a = #{a.inspect}"
+    puts "n = #{new.inspect}"
+  else
+    false
+  end
+end
+
+puts rule1.call(a)
+puts rule2.call(a)
+puts rule1.call(b)
+puts rule2.call(b)
