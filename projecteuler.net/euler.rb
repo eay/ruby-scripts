@@ -85,47 +85,84 @@ end
 # 11, 18, 19, 20, 22, 25
 # so 48 vs 67
 #
-# 11,17,20,22,23,24 - 48 vs 47 - 6, 9,11,14,15
-# 11,18,19,20,22,25 - 48 vs 47 - 7, 8, 9,11,14
+# 11,17,20,22,23,24 - 48 vs 47 - 6, 3, 2, 1, 1
+# 11,18,19,20,22,25 - 48 vs 47 - 7, 1, 1, 2, 3
 #
-# Rule 1) 
+# I postulate that the diffs must be
+# 1, 1, 2, 3, 5?
 def problem_103
 
   rule1 = lambda do |a|
     low_sum = a[0,(a.length+1)/2].reduce(&:+)
     len = (a.length - 1)/2
     hi_sum  = a[-len,len].reduce(&:+)
-    puts "#{low_sum} > #{hi_sum}"
+#    puts "#{low_sum} > #{hi_sum}"
     low_sum > hi_sum
   end
 
-  a1 = [11,18,19,20,22,25]
-  puts a1.inspect
-  puts rule1.call(a1)
-  # a = [20] + a1.map {|t| t+20}
-  a = [20, 31, 38, 39, 40, 42, 45]
-  # a is the starting point
-  puts a.inspect
-  puts rule1.call(a)
-  exit
-  a_max = 25
-  b0 = a[0]
-  num = 0
-  (a[0]+1).upto(a[1]).each do |b1|
-    (b1+1).upto(a[2]).each do |b2|
-      (b2+1).upto(a[3]).each do |b3|
-        (b3+1).upto(a[4]).each do |b4|
-          (b4+1).upto(a[5]).each do |b5|
-            (b5+1).upto(a[6]).each do |b6|
-              puts [b0,b1,b2,b3,b4,b5,b6].inspect
-              num += 1
+  rule2 = lambda do |a|
+    if a.uniq == a
+      bad = false
+      2.upto(a.length/2) do |n|
+        a.combination(n) do |set_a|
+          sum_a = set_a.reduce(&:+)
+          b = a - set_a
+          b.combination(n) do |set_b|
+            if set_b.reduce(&:+) == sum_a
+              bad = true
+              break
             end
           end
+          break if bad
         end
+        break if bad
+      end
+      !bad
+    else
+      false
+    end
+  end
+
+  a = [11,18,19,20,22,25]
+#  puts a1.inspect
+#  puts rule1.call(a1)
+  mid = a[a.length/2]
+  a = [mid] + a.map {|t| t+mid}
+  puts a.inspect
+
+#  mid = a[a.length/2]
+#  a = [mid] + a.map {|t| t+mid}
+#  puts a.inspect
+
+  #a = [20, 31, 38, 39, 40, 42, 45]
+  # 11, 18, 19, 20, 22, 25
+  # 7,1,1,2,3
+  # a is the starting point
+#  puts a.inspect
+  # We should be less that this
+  min = [a.reduce(&:+),a]
+
+  puts "end => #{a.inspect} => #{a.reduce(&:+)}" if rule1.call(a) && rule2.call(a)
+  diffs = [1,1,2,3,4,5,6,7,8,9]
+  a_len = a.length
+  (a[0]).upto(a[0]+2) do |b0|
+    puts b0
+    b = [b0]
+    (a[1]-4).upto(a[1]+2) do |b1|
+      d_len = a_len-2
+      b[1] = b1
+      diffs.permutation(d_len) do |d|
+        0.upto(d_len-1) do |i|
+          b[i+2] = b[i+1] + d[i]
+        end
+        next unless rule1.call(b) && rule2.call(b)
+        puts "good => #{b.inspect} => #{b.reduce(&:+)}"
+        min = [min,[b.reduce(&:+),b]].min
       end
     end
   end
-  num
+  puts min[1].inspect
+  min[1].join
 end
 
 # A bit of a brute force, 8 seconds, so not too bad.  It could probably
@@ -178,10 +215,11 @@ def problem_108
 end
 
 if __FILE__ == $0
-#  p problem_103
+  p problem_103
 end
 
 
+if false
 puts [81, 88, 75, 42, 87, 84, 86, 65].sort.inspect
 puts [157, 150, 164, 119, 79, 159, 161, 139, 158].sort.inspect
 
@@ -206,8 +244,5 @@ rule2 = lambda do |a|
     false
   end
 end
+end
 
-puts rule1.call(a)
-puts rule2.call(a)
-puts rule1.call(b)
-puts rule2.call(b)
