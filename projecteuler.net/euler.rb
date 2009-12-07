@@ -240,6 +240,76 @@ def problem_106
   num
 end
 
+# A solution taken from the comments...
+# I would be interested to work this out from first principals
+# Anothers persons description on how to solve the problem is
+# Here's my pencil/paper solution: 
+#
+# Let's take the set of numbers a_1 < a_2 < a_3 < ... < a_(2*n). How many 
+# equal partitions of this set are trivially unequal? 
+#
+# Consider a partitioning of the numbers into sets S and T. Now imagine 
+# the function f(m) = the number of elements a_i in S where i <= m. 
+#
+# If f(m) >= ceiling(m/2) for all 1<=m<=2*n, then the partition S and T 
+# is trivially unequal, with the sum of set S < the sum of set T. This 
+# is basically saying, as you step from m=1 to m=2*n, you've always 
+# assigned more elements to set S than set T. Equivalentally, 
+# if f(m) <= floor(m/2) for all 1<=m<=2*n, then the 
+# sum of set S > the sum of set T. 
+#
+# Calculating the number of partitions that satisfy the above test is 
+# equivalent to counting the number of paths through problem 15 that 
+# stay below the main diagonal. So, graphically, we can calculate the 
+# answer as follows on a 6x6 grid: 
+#
+# 1 
+# | 
+# 1--1 
+# |  | 
+# 1--2--2 
+# |  |  | 
+# 1--3--5--5 
+# |  |  |  | 
+# 1--4--9--14--14 
+# |  |  |  |   | 
+# 1--5--14-28--42--42 
+# |  |  |  |   |   | 
+# 1--6--20-48--90--132--132 
+#
+# The last number on each row indicates how many partitions of size 2*n
+# are trivially unequal. So subtracting that from the number of total 
+# partitions possible gives you the number you have to test: 
+#
+# 2*n = 2 --> 2C1/2 - 1 = 1 - 1 = 0 
+# 2*n = 4 --> 4C2/2 - 2 = 3 - 2 = 1 
+# 2*n = 6 --> 6C3/2 - 5 = 10 - 5 = 5 
+# 2*n = 8 --> 8C4/2 - 14 = 35 - 14 = 21 
+# 2*n = 10 --> 10C5/2 - 42 = 126 - 42 = 84 
+# 2*n = 12 --> 12C6/2 - 132 = 462 - 132 = 330 
+#
+# To calculate the solution, you need to check the following number of subset
+# pairs: 
+#
+# 12C2*0 + 12C4*1 + 12C6*5 + 12C8*21 + 12C10*84 + 12C12*330 = 21384 
+#
+# addendum: It turns out the numbers I calculated on the grid have a
+# closed form: http://mathworld.wolfram.com/DyckPath.html
+#
+def problem_106a
+  combin = lambda { |m,h| m.factorial / (h.factorial * (m - h).factorial) }
+  max = 20
+
+  sum = Array.new(max+1,-1)
+  1.upto(max) do |n|
+    0.upto(n/2) do |k|
+      sum[n] += combin.call(n,2*k) * combin.call(2*k - 1, k + 1)
+    end
+    puts "#{n} #{sum[n]}"
+  end
+  sum[12]
+end
+
 def problem_108
   n = 4
   q = nil
@@ -256,6 +326,6 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_106
+  p problem_106a
 end
 
