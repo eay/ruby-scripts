@@ -310,6 +310,47 @@ def problem_106a
   sum[12]
 end
 
+def problem_107
+  if true
+    net = [ "-,16,12,21,-,-,-", "16,-,-,17,20,-,-", "12,-,-,28,-,31,-",
+      "21,17,28,-,18,19,23", "-,20,-,18,-,-,11", "-,-,31,19,-,-,27",
+      "-,-,-,23,11,27,-" ]
+    net.map! {|line| line.split(/,/).map {|i| i == '-' ? nil : i.to_i}}
+  else
+    net = []
+    open("network.txt").each do |line|
+      net << line.chomp.split(/,/).map {|i| i == '-' ? nil : i.to_i}
+    end
+  end
+
+  # Reformat into an array of nodes, with the their connections
+  nodes = Array.new(net.length) { Array.new }
+  net.each_with_index do |row,i| # Each nodes is connected to...
+    puts row.inspect
+    row.each_index do |col| # For each possible connection....
+      # Add the node we are connected to and the cost
+      nodes[i] << [row[col], col] if row[col]
+    end
+  end
+
+  # Remove all connections except the least value
+  nodes.each_with_index do |node,i|
+    min = node.min
+    (node - [min]).each do |n|
+      val,peer = n
+      d = nodes[peer].delete [val,i]
+      puts "BAD" unless d
+    end
+    node.replace [min]
+  end
+
+  puts nodes.inspect
+  r = nodes.reduce(0) {|a,node| a + node.reduce(0) {|b,c| b + c[1]}}/2
+  puts "r = #{r}"
+  r
+#  net.reduce(0) {|a,row| a + row.compact.reduce(&:+)}/2
+end
+
 def problem_108
   n = 4
   q = nil
@@ -326,6 +367,6 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_106a
+  p problem_107
 end
 
