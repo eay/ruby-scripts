@@ -195,6 +195,51 @@ def problem_105
   sum
 end
 
+# A bit hacky, but the answer is correct
+def problem_106
+  a = [1,2,3,4]
+  a = [1,2,3,4,5,6,7]
+  a = [1,2,3,4,5,6,7,8,9,10,11,12] 
+  
+  num = 0
+  seen = {}
+  # Don't do length of 1, they are ordered
+  # Because they are size ordered, and 2 smalls are bigger than a large
+  2.upto(a.length/2) do |n|
+    puts "n = #{n}"
+    a.combination(n) do |set_a|
+      b = a - set_a
+      break if b.length < n
+      b.combination(n) do |set_b|
+        key = [set_a,set_b].sort
+        next if seen[key]
+        seen[key] = true
+        index = 0
+        state = 0
+        0.upto(set_a.length-1) do |i|
+          break unless set_b[i] && set_a[i]
+          if set_a[i] < set_b[i]
+            state -= 1
+          else
+            state += 1
+          end
+        end
+
+#        print "#{set_a.inspect} #{set_b.inspect} #{state}"
+        if state.abs <= (set_a.length - 2) ||
+          (state < 0 && set_a.last > set_b.last) ||
+          (state > 0 && set_a.first < set_b.first)
+#          puts " good"
+          num += 1
+        else
+#          puts ""
+        end
+      end
+    end
+  end
+  num
+end
+
 def problem_108
   n = 4
   q = nil
@@ -211,6 +256,6 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_105
+  p problem_106
 end
 
