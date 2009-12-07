@@ -90,59 +90,44 @@ end
 #
 # I postulate that the diffs must be
 # 1, 1, 2, 3, 5?
-def problem_103
-
-  rule1 = lambda do |a|
+class Problem103
+  # The sum(n) must be < than sum(n+1) elements
+  def self.rule2(a)
     low_sum = a[0,(a.length+1)/2].reduce(&:+)
     len = (a.length - 1)/2
     hi_sum  = a[-len,len].reduce(&:+)
-#    puts "#{low_sum} > #{hi_sum}"
     low_sum > hi_sum
   end
 
-  rule2 = lambda do |a|
-    if a.uniq == a
-      bad = false
-      2.upto(a.length/2) do |n|
-        a.combination(n) do |set_a|
-          sum_a = set_a.reduce(&:+)
-          b = a - set_a
-          b.combination(n) do |set_b|
-            if set_b.reduce(&:+) == sum_a
-              bad = true
-              break
-            end
-          end
-          break if bad
+  # No sum of subsets can be equal
+  def self.rule1(a)
+    return false unless a.uniq == a
+    2.upto(a.length/2) do |n|
+      a.combination(n) do |set_a|
+        sum_a = set_a.reduce(&:+)
+        b = a - set_a
+        b.combination(n) do |set_b|
+          return false if set_b.reduce(&:+) == sum_a
         end
-        break if bad
       end
-      !bad
-    else
-      false
     end
+    true
   end
 
+  def self.check(a)
+    rule2(a) && rule1(a)
+  end
+end
+
+def problem_103
   a = [11,18,19,20,22,25]
-#  puts a1.inspect
-#  puts rule1.call(a1)
   mid = a[a.length/2]
   a = [mid] + a.map {|t| t+mid}
   puts a.inspect
 
-#  mid = a[a.length/2]
-#  a = [mid] + a.map {|t| t+mid}
-#  puts a.inspect
-
-  #a = [20, 31, 38, 39, 40, 42, 45]
-  # 11, 18, 19, 20, 22, 25
-  # 7,1,1,2,3
-  # a is the starting point
-#  puts a.inspect
-  # We should be less that this
   min = [a.reduce(&:+),a]
 
-  puts "end => #{a.inspect} => #{a.reduce(&:+)}" if rule1.call(a) && rule2.call(a)
+  puts "end => #{a.inspect} => #{a.reduce(&:+)}" if Problem103.check(a)
   diffs = [1,1,2,3,4,5,6,7,8,9]
   a_len = a.length
   (a[0]).upto(a[0]+2) do |b0|
@@ -155,7 +140,7 @@ def problem_103
         0.upto(d_len-1) do |i|
           b[i+2] = b[i+1] + d[i]
         end
-        next unless rule1.call(b) && rule2.call(b)
+        next unless Problem103.check(b)
         puts "good => #{b.inspect} => #{b.reduce(&:+)}"
         min = [min,[b.reduce(&:+),b]].min
       end
@@ -197,14 +182,25 @@ def problem_104
   end
 end
 
+def problem_105
+  good,sum = 0,0
+  open("sets.txt").each do |l|
+    set = l.chomp.split(/,/).map(&:to_i).sort
+    if Problem103.check set
+      good += 1 
+      sum += set.reduce(&:+)
+    end
+  end
+  puts "#{good} found"
+  sum
+end
+
 def problem_108
   n = 4
   q = nil
   loop do
     Primes.each do |p|
       x = p * n
-
-      
     
       q = p
       n += 1
@@ -215,34 +211,6 @@ def problem_108
 end
 
 if __FILE__ == $0
-  p problem_103
-end
-
-
-if false
-puts [81, 88, 75, 42, 87, 84, 86, 65].sort.inspect
-puts [157, 150, 164, 119, 79, 159, 161, 139, 158].sort.inspect
-
-a = [42, 65, 75, 81, 84, 86, 87, 88]
-b = [79, 119, 139, 150, 157, 158, 159, 161, 164]
-
-rule1 = lambda do |a|
-  low_sum = a[0,(a.length+1)/2].reduce(&:+)
-  len = (a.length - 1)/2
-  hi_sum  = a[-len,len].reduce(&:+)
-  puts "#{low_sum} > #{hi_sum}"
-  low_sum > hi_sum
-end
-
-rule2 = lambda do |a|
-  if a.uniq == a
-    new = []
-    a.each_cons(2) {|x,y| new << y - x}
-    puts "a = #{a.inspect}"
-    puts "n = #{new.inspect}"
-  else
-    false
-  end
-end
+  p problem_105
 end
 
