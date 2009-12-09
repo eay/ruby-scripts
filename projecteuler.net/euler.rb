@@ -414,7 +414,7 @@ def problem_108(size = 1001)
     end
   end
 
-  primes = Primes.upto(1000)
+  primes = Primes.upto(200)
   prime_number = lambda do |a|
     r = 1
     a.sort.reverse.each_with_index { |m,i| r *= primes[i] ** m }
@@ -429,16 +429,19 @@ def problem_108(size = 1001)
       ans = prime_number.call a
 #      puts "np=#{nn} sols=#{sols} ans=#{ans} => #{a.inspect}"
       if values[sols]
-        values[sols] = [values[sols],ans].min
+        values[sols] = [values[sols],[ans,a]].min
       else
-        values[sols] = ans
+        values[sols] = [ans,a]
       end
       true
     end
     size.upto(size*5/4) do |num|
       if values[num]
-        puts "for np = #{nn} => #{num} => #{values[num]}"
-        return values[num] if last == values[num]
+        puts "for np = #{nn} => #{num} => #{values[num].inspect}"
+        if last == values[num]
+          puts "factors = #{values[num][0].factors}"
+          return values[num][0] 
+        end
         last = values[num]
         break
       end
