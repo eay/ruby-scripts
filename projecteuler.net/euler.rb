@@ -366,22 +366,58 @@ def problem_107
   initial - now
 end
 
-def problem_108
-  n = 4
-  q = nil
+# This has generated the numbers for me to calculate the formula
+def problem_108a
+  i = 4
+  max = 0
+  solve = {}
   loop do
-    Primes.each do |p|
-      x = p * n
-    
-      q = p
-      n += 1
-      break if n >= 1000
+    num = 0
+    a = Rational(1,i)
+    2.upto(i*2+1) do |j|
+      if (a - Rational(1,j)).numerator == 1
+        num += 1 
+#        puts "(#{a} - #{Rational(1,j)} == #{a - Rational(1,j)}"
+      end
     end
-    break
+
+    solve[num] = [] unless solve[num]
+    solve[num] << i.factors
+
+    if num >= max
+      puts "####################################"
+      solve.each_key.sort.each do |k|
+        s = solve[k].map do |v|
+          h = {}
+          v.each {|a| h[a] = (h[a] || 0) + 1 }
+          h.values.sort.flatten
+        end.uniq.sort
+        puts "k = #{k} groups: #{s.inspect}"
+#        puts solve[k].inspect
+      end
+      puts "#{i} = #{num} #{i.factors} #{i.factors.length + i.divisors.length}" 
+      max = num
+    end
+    break if num > 1000
+    i += 1
   end
+  i
+end
+
+def problem_108
+  f = lambda do |a|
+    if a.length == 1
+      a[0]+1
+    else
+      m = a[0]
+      (2*m+1) * f(a[1,a.length]) -m
+    end
+  end
+
+
 end
 
 if __FILE__ == $0
-  p problem_107
+  p problem_108
 end
 
