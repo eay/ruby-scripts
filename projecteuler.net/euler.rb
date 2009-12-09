@@ -404,20 +404,58 @@ def problem_108a
   i
 end
 
-def problem_108
-  f = lambda do |a|
+def problem_108(size = 1001)
+  func = lambda do |a|
     if a.length == 1
       a[0]+1
     else
       m = a[0]
-      (2*m+1) * f(a[1,a.length]) -m
+      (2*m+1) * func.call(a[1,a.length]) -m
     end
   end
 
+  primes = Primes.upto(1000)
+  prime_number = lambda do |a|
+    r = 1
+    a.sort.reverse.each_with_index { |m,i| r *= primes[i] ** m }
+    r
+  end
 
+  values = {}
+  last = 0
+  1.upto(100).each do |nn|
+    nn.groupings do |a|
+      sols = func.call a
+      ans = prime_number.call a
+#      puts "np=#{nn} sols=#{sols} ans=#{ans} => #{a.inspect}"
+      if values[sols]
+        values[sols] = [values[sols],ans].min
+      else
+        values[sols] = ans
+      end
+      true
+    end
+    size.upto(size*5/4) do |num|
+      if values[num]
+        puts "for np = #{nn} => #{num} => #{values[num]}"
+        return values[num] if last == values[num]
+        last = values[num]
+        break
+      end
+    end
+    #values.sort.each do |k,v|
+    #  puts "#{k} => #{v}"
+    #end
+  end
+
+  nil
+end
+
+def problem_110
+  problem_108(4_000_001)
 end
 
 if __FILE__ == $0
-  p problem_108
+  p problem_110
 end
 
