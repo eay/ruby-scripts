@@ -404,6 +404,18 @@ def problem_108a
   i
 end
 
+# I solved this one (and 110 as the same time) by myself :-), there are
+# good comments though.
+#
+# From the notes;
+# (n-x)(n-y) = n*n, this tells why the number of solutions equals the number of
+# divisors of n^2 +1 divided by 2.
+# If n is the product of the first k primes n^2 has 3^k divisors so n is
+# smaller than product of the first 15 primes. (that solving klog3-6log10-log8=0).
+# Then we must check if we can delete big primes and add powers to the small ones
+# without affecting the inequality. But this is not a big task since 7^2=49 is
+# bigger than 43. (clearly exponents should descend).
+#
 def problem_108(size = 1001)
   func = lambda do |a|
     if a.length == 1
