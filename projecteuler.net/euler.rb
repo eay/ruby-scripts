@@ -352,21 +352,25 @@ def problem_107
 end
 
 def problem_108
-  n = 4
-  q = nil
-  loop do
-    Primes.each do |p|
-      x = p * n
-    
-      q = p
-      n += 1
-      break if n >= 1000
+  values = [[0,:miss],[25,:bull],[50,:dbull]]
+  (1..20).each { |i| values << [i  ,"s#{i}"] << [i*2,"d#{i}"] << [i*3,"t#{i}"] }
+  doubles = [50] + (1..20).map {|i| i*2}
+
+  ways = {}
+  doubles.each do |d|
+    values.each do |t1|
+      values.each do |t2|
+        v = t1[0] + t2[0] + d
+        next unless v < 100
+        ways[[t1,t2].sort + [d]] = v
+      end
     end
-    break
   end
+  ways.length
 end
 
+puts ways.length
 if __FILE__ == $0
-  p problem_107
+  p problem_108
 end
 
