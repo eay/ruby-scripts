@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
 require 'primes.rb'
-#require 'groupings.rb'
+require 'groupings.rb'
 #require 'polynomial.rb'
 #require 'point.rb'
 
@@ -30,15 +30,29 @@ def problem_110(num_digits = 10)
         # Must do this better
         # Loop over all 'missing' permutation, but insert the digit in
         # the gaps
-        (digit_array + missing).permutation(num_digits) do |perm|
-          next unless last.find(perm[-1]) && perm[0] != 0
-          test = perm.join.to_i
-          next if hits[test]
-          if test.prime?
-            d_found += 1
-            d_sum += test
-            hits[test] = true
-      #      puts "HIT = #{test}"
+        puts "missing = #{missing.inspect}"
+        missing.permutation do |perm|
+          puts "perm = #{perm.inspect}"
+          # We now need to 'fill in the gaps'
+          (perm.length + 1).groupings do |g|
+            ex = perm.length + 1 - g.length
+            g += [0] * ex
+            puts "g = #{g.inspect}"
+            gg = g.map {|n| [digit] * n}
+            # gg is what will fill in the gaps
+            puts "gg = #{gg}"
+            gg.permutation do |dp|
+              dpp = dp.zip(perm).flatten.compact
+              puts "dpp = #{dpp.inspect}"
+              next unless last.find(dpp[-1]) && dpp[0] != 0
+              test = dpp.join.to_i
+              next if hits[test]
+              if test.prime?
+                d_found += 1
+                d_sum += test
+                hits[test] = true
+              end
+            end
           end
         end
       end
@@ -56,6 +70,6 @@ end
 
 
 if __FILE__ == $0
-  p problem_110(8)
+  p problem_110(4)
 end
 
