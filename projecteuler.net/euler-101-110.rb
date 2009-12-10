@@ -462,7 +462,6 @@ def problem_108(size = 1001)
     #  puts "#{k} => #{v}"
     #end
   end
-
   nil
 end
 
@@ -470,7 +469,6 @@ def problem_110
   problem_108(4_000_001)
 end
 
-puts ways.length
 if __FILE__ == $0
   p problem_110
 end
