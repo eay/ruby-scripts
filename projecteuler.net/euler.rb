@@ -470,6 +470,7 @@ def problem_110
   problem_108(4_000_001)
 end
 
+puts ways.length
 if __FILE__ == $0
   p problem_110
 end
