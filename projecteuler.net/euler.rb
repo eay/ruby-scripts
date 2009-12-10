@@ -351,22 +351,21 @@ def problem_107
 #  net.reduce(0) {|a,row| a + row.compact.reduce(&:+)}/2
 end
 
+# Change things so that we avoid duplicates by only working over
+# less of the possible values for the second throw
 def problem_108
-  values = [[0,:miss],[25,:bull],[50,:dbull]]
-  (1..20).each { |i| values << [i  ,"s#{i}"] << [i*2,"d#{i}"] << [i*3,"t#{i}"] }
+  values = [0,25,50] + (1..20).map {|i| [i,i*2,i*3]}.flatten
   doubles = [50] + (1..20).map {|i| i*2}
 
-  ways = {}
+  number = 0
   doubles.each do |d|
-    values.each do |t1|
-      values.each do |t2|
-        v = t1[0] + t2[0] + d
-        next unless v < 100
-        ways[[t1,t2].sort + [d]] = v
+    values.each_with_index do |t1,start|
+      values[start..-1].each do |t2|
+        number += 1 if t1 + t2 + d < 100
       end
     end
   end
-  ways.length
+  number
 end
 
 puts ways.length
