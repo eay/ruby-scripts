@@ -310,8 +310,14 @@ def problem_106a
   sum[12]
 end
 
+# Quite easy, slowly borg in the other points, always sucking in the
+# lowest link.
+# From reading the solutions, I implemented what is called the
+# Prim Algorithm.  I had also considered what is called
+# Kruskal Algorithm but decided to go with the borg approch.
+# http://students.ceid.upatras.gr/~papagel/project/contents.htm
 def problem_107
-  if true
+  if false
     net = [ "-,16,12,21,-,-,-", "16,-,-,17,20,-,-", "12,-,-,28,-,31,-",
       "21,17,28,-,18,19,23", "-,20,-,18,-,-,11", "-,-,31,19,-,-,27",
       "-,-,-,23,11,27,-" ]
@@ -324,33 +330,43 @@ def problem_107
   end
 
   # Reformat into an array of nodes, with the their connections
-  nodes = Array.new(net.length) { Array.new }
+  nodes = Hash.new {|h,k| h[k] = Hash.new }
   net.each_with_index do |row,i| # Each nodes is connected to...
-    puts row.inspect
     row.each_index do |col| # For each possible connection....
       # Add the node we are connected to and the cost
-      nodes[i] << [row[col], col] if row[col]
+      nodes[i][col] = row[col] if row[col]
     end
   end
 
-  # Remove all connections except the least value
-  nodes.each_with_index do |node,i|
-    min = node.min
-    (node - [min]).each do |n|
-      val,peer = n
-      d = nodes[peer].delete [val,i]
-      puts "BAD" unless d
+  initial = nodes.reduce(0) do |a,row|
+    row[1].reduce(a) {|aa,p| aa + p[1] }
+  end / 2
+  # add to the 'borg' that is node0
+  node0,node0_links = nodes.shift
+  ans = []
+  node0_contains = Hash.new
+  node0_contains[node0] = true
+
+  # What we do select the lowest link, the 'merge' it into node0, repeat
+  while nodes.length > 0
+    n,v = node0_links.min {|a,b| a[1] <=> b[1]}
+    ans << [n,v] # Save the link for the answer
+    node0_contains[n] = true # add to the 'borg' that is node0
+    nodes[n].each_pair do |k,a| # Now merge in new poin, update vertexs
+      next if node0_contains[k]
+      node0_links[k] = [a, node0_links[k] || 1_000_000].min
     end
-    node.replace [min]
+    nodes.delete(n)         # Remove from free nodes
+    node0_links.delete(n)   # Remove from vertexes to resolve
   end
 
-  puts nodes.inspect
-  r = nodes.reduce(0) {|a,node| a + node.reduce(0) {|b,c| b + c[1]}}/2
-  puts "r = #{r}"
-  r
-#  net.reduce(0) {|a,row| a + row.compact.reduce(&:+)}/2
+  now = ans.reduce(0) {|a,v| a + v[1]}
+  puts "initial = #{initial}"
+  puts "now     = #{now}"
+  initial - now
 end
 
+<<<<<<< HEAD:projecteuler.net/euler.rb
 # Change things so that we avoid duplicates by only working over
 # less of the possible values for the second throw
 def problem_108
@@ -366,6 +382,54 @@ def problem_108
     end
   end
   number
+=======
+# This has generated the numbers for me to calculate the formula
+def problem_108a
+  i = 4
+  max = 0
+  solve = {}
+  loop do
+    num = 0
+    a = Rational(1,i)
+    2.upto(i*2+1) do |j|
+      if (a - Rational(1,j)).numerator == 1
+        num += 1 
+#        puts "(#{a} - #{Rational(1,j)} == #{a - Rational(1,j)}"
+      end
+    end
+
+    solve[num] = [] unless solve[num]
+    solve[num] << i.factors
+
+    if num >= max
+      puts "####################################"
+      solve.each_key.sort.each do |k|
+        s = solve[k].map do |v|
+          h = {}
+          v.each {|a| h[a] = (h[a] || 0) + 1 }
+          h.values.sort.flatten
+        end.uniq.sort
+        puts "k = #{k} groups: #{s.inspect}"
+#        puts solve[k].inspect
+      end
+      puts "#{i} = #{num} #{i.factors} #{i.factors.length + i.divisors.length}" 
+      max = num
+    end
+    break if num > 1000
+    i += 1
+  end
+  i
+end
+
+def problem_108
+  f = lambda do |a|
+    if a.length == 1
+      a[0]+1
+    else
+      m = a[0]
+      (2*m+1) * f(a[1,a.length]) -m
+    end
+  end
 end
 
 puts ways.length

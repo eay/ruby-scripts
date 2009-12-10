@@ -54,15 +54,20 @@ class Polynomial
       when -1
         sign,m = "-",nil
       when m < 0
-        sign,m = "-","#{m.abs.to_s}*"
+        sign,m = "-","#{m.abs.to_s}"
       when 1
         sign,m = "+",nil
       else # m > 0
-        sign,m = "+","#{m.abs.to_s}*"
+        sign,m = "+","#{m.abs.to_s}"
       end
       r += " #{sign} " unless r == "" && sign == "+"
-      r += "#{m}*" if m
-      r += "n**#{i}"
+      if i == 0
+        r += m if m
+      elsif i == 1
+        r += "#{m}*n" if m
+      else
+        r += "n^#{i}"
+      end
     end
     r.strip
   end
