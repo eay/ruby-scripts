@@ -74,9 +74,19 @@ def problem_111(num_digits = 10)
   total
 end
 
+# Lets just do a simple brute force check, 1.5sec
 def problem_112
+  bouncy = 0
+  num = 100
+  loop do
+    bouncy += 1 if num.bouncy?
+    break if num * 99 == bouncy * 100
+    num += 1
+  end
+  num
+end
 
 if __FILE__ == $0
-  p problem_110
+  p problem_112
 end
 

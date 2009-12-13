@@ -176,6 +176,30 @@ class Primes
 end
 
 class Integer
+  # Digits are neither incrementing or decrementing
+  def bouncy?
+    dl = self % 10
+    n = self / 10
+    dir = 0
+    while n > 0
+      #n,dn = n.divmod(10)
+      dn = n % 10
+      n = n / 10
+
+      d = dl <=> dn
+      case dir
+      when -1
+        return true if d == 1
+      when 0
+        dir = d
+      when 1
+        return true if d == -1
+      end
+      dl = dn
+    end
+    return false
+  end
+
   def factorial
     (1..self).reduce(1) {|a,n| a*n}
   end
