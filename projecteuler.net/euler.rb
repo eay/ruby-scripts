@@ -2,7 +2,7 @@
 # Taken from http://projecteuler.net
 require 'primes.rb'
 require 'groupings.rb'
-#require 'polynomial.rb'
+require 'polynomial.rb'
 #require 'point.rb'
 
 # To solve this one, we make a template of 10 of the digit we are checking
@@ -86,7 +86,28 @@ def problem_112
   num
 end
 
+def problem_113
+  # number 
+  u_num = [10,9,8,7,6,5,4,3,2,1]
+#  b_num = [1,1,1,1,1,1,1,1,1,1]
+  d_num = [1,2,3,4,5,6,7,8,9,10]
+  puts (u_num + d_num).reduce(&:+)
+  u = u_num.reduce(0) {|a,i| a + i**2}
+  d = d_num.reduce(0) {|a,i| a + i**2}
+  puts u + d
+
+  last = 100
+  bouncy = 0
+  num = 100
+  loop do
+    bouncy += 1 if num.bouncy?
+    break if num == 10000
+    num += 1
+  end
+  puts "bouncy=#{bouncy} non-bouncy=#{num-bouncy}"
+end
+
 if __FILE__ == $0
-  p problem_112
+  p problem_113
 end
 
