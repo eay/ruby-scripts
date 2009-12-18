@@ -87,24 +87,38 @@ def problem_112
 end
 
 def problem_113
-  # number 
-  u_num = [10,9,8,7,6,5,4,3,2,1]
-#  b_num = [1,1,1,1,1,1,1,1,1,1]
-  d_num = [1,2,3,4,5,6,7,8,9,10]
-  puts (u_num + d_num).reduce(&:+)
-  u = u_num.reduce(0) {|a,i| a + i**2}
-  d = d_num.reduce(0) {|a,i| a + i**2}
-  puts u + d
+  # The index is the lowest value seen
+  u = Array.new(10,0)
+  # The index is the only values seen
+  s = Array.new(10,1)
+  # The index is the highest value seen
+  d = Array.new(10,0)
 
-  last = 100
-  bouncy = 0
-  num = 100
-  loop do
-    bouncy += 1 if num.bouncy?
-    break if num == 10000
-    num += 1
+  t = Array.new(10,0)
+  total = 9
+  (2..100).each do |z|
+    ru,rs,rd = t.dup,t.dup,t.dup
+    # rember that adding a leading 0 changes nothing
+    10.times do |last_d|
+      10.times do |next_d|
+        if last_d == 0 && next_d == 0
+        end
+        ru[next_d] += u[last_d] if next_d <= last_d
+        rd[next_d] += d[last_d] if next_d >= last_d
+
+        ru[next_d] += s[last_d] if next_d < last_d
+        rs[next_d] += s[last_d] if next_d == last_d
+        rd[next_d] += s[last_d] if next_d > last_d
+      end
+    end
+    puts ru.inspect
+    puts rs.inspect
+    puts rd.inspect
+    total = total + [ru + rs + rd].flatten.reduce(&:+) - ru[0] - rs[0]
+    puts "1e#{z} => #{total}"
+    u,s,d = ru,rs,rd
   end
-  puts "bouncy=#{bouncy} non-bouncy=#{num-bouncy}"
+  total
 end
 
 if __FILE__ == $0
