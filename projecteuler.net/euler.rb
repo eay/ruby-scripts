@@ -121,11 +121,41 @@ def problem_113
   total
 end
 
-def problem_114
-  [1,2,3].permutations
+# We will break this problem up by first specifying the number of elements.
+# We then generate all possible sizes for this number and combinations.
+# We then 'fill' the gaps between them.
+P114_MinLen = 3
+def problem_114(squares = 50)
+  def p114_elements(squares)
+    num = 1
+    loop do
+      l = squares - (num - 1) # the number of 'free' squares.
+      l -= num * P114_MinLen  # the number that can be used for 'fill'
+      l -= 1 if num == 0
+      yield num,l
+      num += 1
+      # make sure to leave the spaces
+      break if squares < num * (P114_MinLen + 1) - 1
+    end
+  end
+
+  comb = {}
+  p114_elements(squares) do |n,fill|
+    puts "#{n} elements, with #{fill} fillers"
+    comb[[n] + [0] * (n > 0 ? (n - 1) : 0)] = true
+    fill.groupings do |a|
+      a += [0] * (n - a.length) unless n < a.length
+      puts "key=#{a.inspect}"
+      comb[a] = true
+    end
+    puts "comb = #{comb.keys.inspect}"
+    
+    puts "#{n} #{fill}"
+#    perms(n+1,fill)
+  end
 end
 
 if __FILE__ == $0
-  p problem_114
+  p problem_114(7)
 end
 
