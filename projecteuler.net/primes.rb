@@ -456,6 +456,16 @@ class Integer
 end
 
 class Array
+  # return the number of possible ways that the passed array could be re-ordered.
+  # [1, 2, 2, 2] => 4
+  # [1, 2, 2, 3] => 12
+  # [2, 2, 3, 3] => 6
+  def permutations
+    h = Hash.new(0)
+    self.each { |i| h[i] += 1 }
+    h.reduce(self.size.factorial) { |a,b| a /= b[1].factorial }
+  end
+
   # yield with each possible ordering of the passed array.
   # We must be passed at least 2 elements.
   # The permutation is conducted starting with the last elements in the array
@@ -473,19 +483,6 @@ class Array
         b[i],c = c,b[i]
       end
     end
-  end
-
-  # Number of ways to permutate the elements.  If elements are
-  # duplicated, we handle it.
-  def permutations
-    f = self.length.factorial
-    u = self.uniq
-    if u.length != self.length
-      self.group_by {|i| i}.map {|k,v| v.length}.each do |n|
-        f /= n.factorial
-      end
-    end
-    f
   end
 end
 

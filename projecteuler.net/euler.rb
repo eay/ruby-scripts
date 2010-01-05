@@ -121,7 +121,11 @@ def problem_113
   total
 end
 
+def problem_114
+  [1,2,3].permutations
+end
+
 if __FILE__ == $0
-  p problem_113
+  p problem_114
 end
 
