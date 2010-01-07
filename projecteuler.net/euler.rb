@@ -210,59 +210,18 @@ end
 # Note, there does not need to be alternating tiles
 # Quite easy to solve
 def problem_116(m = 50)
-  solve = lambda do |num,sizes,cache|
-    if r = cache[num]
-      r
-    else
-      ret = 0
-      sizes.each do |s|
-        next if s > num
-        if num == s
-          ret += 1 
-          next
-        else
-          ret += solve.call(num - s, sizes,cache)
-        end
-      end
-      cache[num] = ret
-      ret
-    end
-  end
-
-  red   = solve.call(m,[1,2],{}) - 1
-  green = solve.call(m,[1,3],{}) - 1
-  blue  = solve.call(m,[1,4],{}) - 1
+  red   = m.tiling([1,2]) - 1
+  green = m.tiling([1,3]) - 1
+  blue  = m.tiling([1,4]) - 1
   puts "red = #{red} blue = #{blue} green = #{green}"
   red + green + blue
 end
 
-def problem_117(number = 50)
-  cache = {}
-  solve = lambda do |n|
-    if r = cache[n]
-      r
-    else
-      if n <= 1
-        r = 1
-      else
-        num = 0
-        (0..(n-4)).each do |u4|
-          (0..(n-u4*4-3)).each do |u3|
-            (0..(n-u4*4-u3*3-2)).each do |u2|
-              num += solve.call(n - u4*4 - u3*3 - u2*2)
-            end
-          end
-        end
-        cache[n] = num
-        num
-      end
-    end
-  end
-
-  solve.call(number)
+def problem_117(m = 50)
+  m.tiling([1,2,3,4])
 end
 
 if __FILE__ == $0
-  p problem_116
+  p problem_117
 end
 

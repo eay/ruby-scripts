@@ -77,6 +77,28 @@ class Integer
     start.uniq
   end
 
+  # How many combinations of the various lengths can be used to
+  # make up the passed length.
+  # self is the length, sizes is an array of 'tile' sizes
+  def tiling(sizes,cache = {})
+    if r = cache[self]
+      r
+    else
+      ret = 0
+      sizes.each do |s|
+        next if s > self
+        if self == s
+          ret += 1
+          next
+        else
+          ret += (self - s).tiling(sizes,cache)
+        end
+      end
+      cache[self] = ret
+      ret
+    end
+  end
+
   # New version, does yields, much more efficent, good to use
   # recursion :-).  yield must return true or we bail.
   def groupings
