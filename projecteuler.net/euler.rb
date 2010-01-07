@@ -128,7 +128,7 @@ end
 # [1,1] and [1,2] for black blocks
 # 5.7sec, could probably be much quicker if I cleaned up the
 # groupings method to only allocate into 'n' buckets.
-# Some people used recursion
+# Some people used recursion, this method uses partitioning
 def problem_114a(squares = 50)
   num = 1 # Allow for all black
 
@@ -169,7 +169,71 @@ def problem_114a(squares = 50)
   num
 end
 
+# retusive with caching, 0.032sec
+def problem_114(min = 3, number = 50, cache = {})
+  solve = lambda do |n|
+    if r = cache[n]
+      r
+    else
+      # If no space left, just report the current item.
+      if n <= min - 1 
+        r = 1
+      else
+        num = 1 # The current status plus what we can add
+        (0 .. (n-min)).each do |d| # Black 0 to last red long
+          (min .. (n-d)).each do |t| # One Red
+            # See how many we can fit into what is left
+            num += solve.call(n - d - t - 1)
+          end
+        end
+        r = num
+      end
+      cache[n] = r
+      r
+    end
+  end
+  solve.call(number)
+end
+
+# 0.67sec
+def problem_115(m = 50)
+  cache = {}
+  n = m + 1
+  loop do
+    r = problem_114(m,n,cache)
+    puts "F(#{m},#{n}) => #{r}"
+    return(n) if r > 1_000_000
+    n += 1
+  end
+end
+
+def problem_117(number = 50)
+  cache = {}
+  solve = lambda do |n|
+    if r = cache[n]
+      r
+    else
+      if n <= 1
+        r = 1
+      else
+        num = 0
+        (0..(n-4)).each do |u4|
+          (0..(n-u4*4-3)).each do |u3|
+            (0..(n-u4*4-u3*3-2)).each do |u2|
+              num += solve.call(n - u4*4 - u3*3 - u2*2)
+            end
+          end
+        end
+        cache[n] = num
+        num
+      end
+    end
+  end
+
+  solve.call(number)
+end
+
 if __FILE__ == $0
-  p problem_114(50)
+  p problem_115
 end
 
