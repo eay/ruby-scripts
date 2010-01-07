@@ -207,6 +207,35 @@ def problem_115(m = 50)
   end
 end
 
+# Note, there does not need to be alternating tiles
+# Quite easy to solve
+def problem_116(m = 50)
+  solve = lambda do |num,sizes,cache|
+    if r = cache[num]
+      r
+    else
+      ret = 0
+      sizes.each do |s|
+        next if s > num
+        if num == s
+          ret += 1 
+          next
+        else
+          ret += solve.call(num - s, sizes,cache)
+        end
+      end
+      cache[num] = ret
+      ret
+    end
+  end
+
+  red   = solve.call(m,[1,2],{}) - 1
+  green = solve.call(m,[1,3],{}) - 1
+  blue  = solve.call(m,[1,4],{}) - 1
+  puts "red = #{red} blue = #{blue} green = #{green}"
+  red + green + blue
+end
+
 def problem_117(number = 50)
   cache = {}
   solve = lambda do |n|
@@ -234,6 +263,6 @@ def problem_117(number = 50)
 end
 
 if __FILE__ == $0
-  p problem_115
+  p problem_116
 end
 
