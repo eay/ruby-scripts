@@ -450,7 +450,6 @@ class Integer
     (1..(self/2)).each do |k|
       sum += 1 + count.call(self-k,k)
     end
-    puts "#{r - sum}"
     r
   end
 end

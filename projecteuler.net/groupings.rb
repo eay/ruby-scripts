@@ -83,13 +83,13 @@ class Integer
     solve = lambda do |a,off,max|
       while a[off] < max && (a.length-off) >= 2 
         a[off] += a.pop
-        return unless yield a
+        return unless yield a.dup
         solve.call(a.dup,off+1,a[off]) if a.length - off > 1
       end
     end
 
     start = [1] * self
-    yield start
+    yield start.dup
     solve.call(start, 0, self-1) if self > 1
   end
 
@@ -178,8 +178,6 @@ class Integer
   end
 
 end
-
-
 
 if __FILE__ == $0
   2.sqrt_digits

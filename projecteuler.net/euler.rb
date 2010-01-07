@@ -121,41 +121,55 @@ def problem_113
   total
 end
 
-# We will break this problem up by first specifying the number of elements.
-# We then generate all possible sizes for this number and combinations.
-# We then 'fill' the gaps between them.
-P114_MinLen = 3
-def problem_114(squares = 50)
-  def p114_elements(squares)
-    num = 1
-    loop do
-      l = squares - (num - 1) # the number of 'free' squares.
-      l -= num * P114_MinLen  # the number that can be used for 'fill'
-      l -= 1 if num == 0
-      yield num,l
-      num += 1
-      # make sure to leave the spaces
-      break if squares < num * (P114_MinLen + 1) - 1
+# We solve this problem by breaking the problem into the number of red blocks
+# and the number of black blocks.  We will account for the ends by adding
+# 2 blocks.  So, for 4 squares we can have
+# [[4], [3]] for red blocks and
+# [1,1] and [1,2] for black blocks
+# 5.7sec, could probably be much quicker if I cleaned up the
+# groupings method to only allocate into 'n' buckets.
+# Some people used recursion
+def problem_114a(squares = 50)
+  num = 1 # Allow for all black
+
+  # Return the number of possible allocations
+  comb = lambda do |num,items|
+    return 1 if num == 1 || items == 0
+    return num if items == 1
+    ret = num # Allow for [num,0,0], [0,num,0], [0,0,num]
+    items.groupings do |a|
+      if a.length <= num
+        while a.length < num
+          a << 0
+        end
+        #puts "items => #{a.inspect}"
+        ret += a.permutations
+      end
+      true
     end
+    ret
   end
 
-  comb = {}
-  p114_elements(squares) do |n,fill|
-    puts "#{n} elements, with #{fill} fillers"
-    comb[[n] + [0] * (n > 0 ? (n - 1) : 0)] = true
-    fill.groupings do |a|
-      a += [0] * (n - a.length) unless n < a.length
-      puts "key=#{a.inspect}"
-      comb[a] = true
+  min_size = 3
+  max_red_blocks = (squares+1)/(min_size+1)
+  1.upto(max_red_blocks) do |red_blocks|
+    # red_blocks is the number of red elements
+    # black_blocks is the number of black elements
+    black_blocks = red_blocks + 1
+    (red_blocks*min_size).upto((squares - red_blocks) + 1) do |red_squares|
+      keep = []
+      black_squares = squares - red_squares + 2
+      
+      rs = comb.call(red_blocks,red_squares - red_blocks * min_size)
+      bs = comb.call(black_blocks,black_squares - black_blocks)
+      puts "rb = #{red_blocks}/#{red_squares} bs = #{black_blocks}/#{black_squares} => rs=#{rs} bs=#{bs}"
+      num += rs * bs
     end
-    puts "comb = #{comb.keys.inspect}"
-    
-    puts "#{n} #{fill}"
-#    perms(n+1,fill)
   end
+  num
 end
 
 if __FILE__ == $0
-  p problem_114(7)
+  p problem_114(50)
 end
 
