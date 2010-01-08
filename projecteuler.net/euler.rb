@@ -234,8 +234,6 @@ def problem_118
         next if n > 1 && a.reduce(&:+) % 3 == 0
         rem = (d - a).sort
         # If only one digit left, make sure it is prime
-   #     next if rem.length == 1 && !rem[0].prime?
-
         a.permutation do |p|
           if p.join.to_i.prime?
             if rem.length == 0
@@ -257,7 +255,6 @@ def problem_118
   good = problem_118_solve([],[1,2,3,4,5,6,7,8,9]).keys
   # good is an array of sets that have at least one solution
   hits = 0
-  pcache = {}
   cache = {}
   puts "Number of digit groupings is #{good.length}"
   puts "Permutate sets"
@@ -272,7 +269,6 @@ def problem_118
         else
           t = 0
           p.join.to_i.permutation do |q|
-      #      next if q.last.even?
             t += 1 if q.prime?
           end
         end
@@ -280,14 +276,25 @@ def problem_118
       end
       times *= t
     end
-#    puts "#{a.inspect} => #{tr}"
     hits += times
-#    puts hits
   end
   hits
 end
 
+def problem_119
+  hits = {}
+  200.times do |x|
+    20.times do |y|
+      z = x ** y
+      next unless z >= 10
+      sum = z.to_s.split(//).map(&:to_i).reduce(&:+)
+      hits[z] = true if sum == x
+    end
+  end
+  hits.keys.sort[30-1]
+end
+
 if __FILE__ == $0
-  p problem_118
+  p problem_119
 end
 
