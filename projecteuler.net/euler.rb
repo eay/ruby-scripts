@@ -221,7 +221,69 @@ def problem_117(m = 50)
   m.tiling([1,2,3,4])
 end
 
+# It takes just over 1 minute
+def problem_118
+  def problem_118_solve(set,d)
+    good = {}
+    d.length.downto(1) do |n|
+      d.combination(n) do |a|
+        # Trivial prime check
+        next if n > 1 && a.reduce(&:+) % 3 == 0
+        rem = (d - a).sort
+        # If only one digit left, make sure it is prime
+        next if rem.length == 1 && !rem[0].prime?
+
+        a.permutation do |p|
+          if p.join.to_i.prime?
+            if rem.length == 0
+              good[(set.dup << a).sort] = true
+              # puts good.last.inspect
+            else
+              good = good.merge problem_118_solve(set.dup << a,rem.sort)
+            end
+            break
+          end
+        end
+
+      end
+    end
+    good
+  end
+
+  puts "Find sets"
+  good = problem_118_solve([],[1,2,3,4,5,6,7,8,9]).keys
+  # good is an array of sets that have at least one solution
+  hits = 0
+  pcache = {}
+  cache = {}
+  puts "permutate sets"
+
+  puts "Number of sets is #{good.length}"
+  good.each do |a|
+    times = []
+    # For each element, how many primes can we make
+    a.each do |p|
+      unless t = cache[p]
+        t = 0
+#        puts p.inspect
+        p.permutation do |q|
+#          if pcache
+          t += 1 if q.join.to_i.prime?
+        end
+        puts "#{p.inspect} #{t}"
+        cache[p] = t
+      end
+      times << t
+    end
+    tr = times.reduce(&:*)
+    puts "#{a.inspect} => #{tr}"
+    hits += tr
+#    puts hits
+  end
+  hits
+end
+
 if __FILE__ == $0
-  p problem_117
+  p problem_118
 end
 
