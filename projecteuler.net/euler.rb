@@ -221,8 +221,11 @@ def problem_117(m = 50)
   m.tiling([1,2,3,4])
 end
 
-# It takes just over 1 minute
+# It takes just over 1 minute 
+# Udate, 55sec
 def problem_118
+  # Return hash with the keys being a sorted array or sorted arrays of
+  # suitable elements
   def problem_118_solve(set,d)
     good = {}
     d.length.downto(1) do |n|
@@ -231,7 +234,7 @@ def problem_118
         next if n > 1 && a.reduce(&:+) % 3 == 0
         rem = (d - a).sort
         # If only one digit left, make sure it is prime
-        next if rem.length == 1 && !rem[0].prime?
+   #     next if rem.length == 1 && !rem[0].prime?
 
         a.permutation do |p|
           if p.join.to_i.prime?
@@ -256,28 +259,29 @@ def problem_118
   hits = 0
   pcache = {}
   cache = {}
-  puts "permutate sets"
+  puts "Number of digit groupings is #{good.length}"
+  puts "Permutate sets"
 
-  puts "Number of sets is #{good.length}"
   good.each do |a|
-    times = []
+    times = 1
     # For each element, how many primes can we make
     a.each do |p|
       unless t = cache[p]
-        t = 0
-#        puts p.inspect
-        p.permutation do |q|
-#          if pcache
-          t += 1 if q.join.to_i.prime?
+        if p.length == 1 # Must be prime
+          t = 1
+        else
+          t = 0
+          p.join.to_i.permutation do |q|
+      #      next if q.last.even?
+            t += 1 if q.prime?
+          end
         end
-        puts "#{p.inspect} #{t}"
         cache[p] = t
       end
-      times << t
+      times *= t
     end
-    tr = times.reduce(&:*)
-    puts "#{a.inspect} => #{tr}"
-    hits += tr
+#    puts "#{a.inspect} => #{tr}"
+    hits += times
 #    puts hits
   end
   hits

@@ -176,6 +176,27 @@ class Primes
 end
 
 class Integer
+  # Integer version of permutation
+  def permutation(&block)
+    rec = lambda do |n,d|
+      if d.length == 1
+        yield n*10 + d.first
+      else
+        n *= 10
+        dd = d.dup
+        old = dd.shift
+        dd.length.times do |i|
+          rec.call(n + old, dd)
+          dd[i],old = old, dd[i]
+        end
+        rec.call(n + old, dd)
+      end
+    end
+
+    rec.call(0, self.to_s.split(//).map(&:to_i))
+    self
+  end
+
   # Digits are neither incrementing or decrementing
   def bouncy?
     dl = self % 10
