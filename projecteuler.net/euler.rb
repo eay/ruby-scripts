@@ -315,7 +315,15 @@ end
 
 # Fast version, 1sec, keep on searching until we have seen the current
 # max again, this means we are in a loop.
-def problem_120
+# The following relationship holds, but I'm not really sure if it
+# would make things much faster to calculate since the addition
+# cycles still need to be calculated
+# (a+1)^2 % a^2 => a^2 + 2a + 1 => 2a + 1
+# (a+1)^3 % a^2 => (2a + 1) * (a + 1) => 3a + 1, so a*n + 1
+# Same for (a-1)^n, leads to 
+# (a*n - 1) for odd and
+# (1 - a*n) for even
+def problem_120b
   m = []
   3.upto(1000) do |a|
     a2 = a*a
@@ -335,6 +343,7 @@ def problem_120
   puts 333082500
   m.reduce(&:+)
 end
+
 
 if __FILE__ == $0
   p problem_120a
