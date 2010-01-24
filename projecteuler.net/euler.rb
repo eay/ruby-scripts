@@ -294,7 +294,49 @@ def problem_119
   hits.keys.sort[30-1]
 end
 
+# Solves it with brute force, there is a better way.
+# 244sec 333082500
+def problem_120a
+  m = []
+  3.upto(1000) do |a|
+    a2 = a*a
+    ni,pi = (a-1),(a+1)
+    mm = 0
+    (ni * pi).times do |ch|
+      mm = [mm,(ni + pi) % a2].max
+      ni = (ni * (a-1)) % a2
+      pi = (pi * (a+1)) % a2
+    end
+    puts "a=#{a} m=#{mm}"
+    m << mm
+  end
+  m.reduce(&:+)
+end
+
+# Fast version, 1sec, keep on searching until we have seen the current
+# max again, this means we are in a loop.
+def problem_120
+  m = []
+  3.upto(1000) do |a|
+    a2 = a*a
+    v0 = a - 1
+    v1 = a + 1
+    max = (v0 + v1) % a2
+    loop do
+      v0 = (v0 * (a-1)) % a2
+      v1 = (v1 * (a+1)) % a2
+      sum = (v0 + v1) % a2
+      break if max == sum
+      max = [max,sum].max
+    end
+    puts "a=#{a} m #{max}"
+    m << max
+  end
+  puts 333082500
+  m.reduce(&:+)
+end
+
 if __FILE__ == $0
-  p problem_119
+  p problem_120a
 end
 
