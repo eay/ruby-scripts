@@ -344,6 +344,70 @@ def problem_120b
   m.reduce(&:+)
 end
 
+# 0.45s of a second using rationals
+# ANS => 2269
+def problem_121a(turns = 15)
+  turn_list = (0...turns).to_a
+  red_prob = turns.times.reduce([]) do |p,turn|
+    p << Rational(turn+1,turn+1+1)
+  end
+  blue_prob = red_prob.map {|p| Rational(1) - p }
+
+  # Work out the chance of loosing, a bit less work.
+  total = Rational(0)
+  (turns/2+1).upto(turns) do |num_blue|
+    turn_list.combination(num_blue) do |blues|
+      reds = turn_list - blues
+      rp = reds.reduce(Rational(1)) { |a,b| a * red_prob[b] }
+      bp = (turn_list - reds).reduce(Rational(1)) { |a,b| a * blue_prob[b] }
+      p = rp * bp
+      total += p
+    end
+  end
+  (Rational(1) / total).to_i
+end
+
+# 0.31s using float
+# ANS => 2269
+def problem_121f(turns = 15)
+  turn_list = (0...turns).to_a
+  red_prob = turns.times.reduce([]) do |p,turn|
+    p << (1.0+turn)/(1.0+1.0+turn)
+  end
+  blue_prob = red_prob.map {|p| 1 - p }
+
+  # Work out the chance of loosing, a bit less work.
+  total = 0.0
+  (turns/2+1).upto(turns) do |num_blue|
+    turn_list.combination(num_blue) do |blues|
+      reds = turn_list - blues
+      rp = reds.reduce(1.0) { |a,b| a * red_prob[b] }
+      bp = (turn_list - reds).reduce(1.0) { |a,b| a * blue_prob[b] }
+      p = rp * bp
+      total += p
+    end
+  end
+  (1.0 / total).to_i
+end
+
+# using recursion 0.07s
+def problem_121(turns = 15)
+  blue_wins = turns/2+1
+  win = lambda do |idx,turns, blue|
+    return 1.0 if blue == blue_wins # turns/2+1
+    return 0.0 if idx == turns
+    nballs = 2.0 + idx
+    (win.call(idx+1,turns,blue+1) + 
+     (nballs-1) * win.call(idx+1,turns,blue)) / nballs
+  end
+
+  (1/win.call(0,turns,0)).to_i
+end
+
+if __FILE__ == $0
+  p problem_121
+end
+
 
 if __FILE__ == $0
   p problem_120a
