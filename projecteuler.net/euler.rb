@@ -404,12 +404,55 @@ def problem_121(turns = 15)
   (1/win.call(0,turns,0)).to_i
 end
 
-if __FILE__ == $0
-  p problem_121
+def problem_122a(max = 200)
+  v = {1 => 0, 2 => 1}
+  n = 4
+  loop do
+    v.keys.each do |k|
+      v[k+k] = v[k] + 1
+    end
+    best = 1_000_000
+    vv = v.dup
+    v.keys.combination(2) do |a,b|
+      puts "#{a} #{b}"
+      if a+b == n
+        puts "HIT #{a}[#{v[a]}] #{b}[#{v[b]}] => #{v[a] + v[b] + 1}"
+        best = [best,v[a] + v[b] + 1].min
+      else
+        vv[a+b] = v[a] + v[b] + 1
+      end
+    end
+    return best if best < 1_000_000
+    v = vv
+  end
 end
 
+def problem_122(max = 200)
+  maps = []
+  done = {}
+  done[1] = 1
+  upto = 2
+  while upto < max
+    # Find a number we don't have a value for
+    while done[upto] do
+      upto += 1
+    end
+    # Starting at this point, which will be done[upto-1]+1
+    best = {}
+    muls = (done[upto-1]+1)
+    t = upto
+    while t <= max
+      best[t] = muls
+      t += t
+      muls += 1
+    end
+    maps << best
+    done = best.merge(done)
+    puts done.inspect
+  end
+end
 
 if __FILE__ == $0
-  p problem_120a
+  p problem_122 #(15)
 end
 
