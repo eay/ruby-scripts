@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes.rb'
-require 'groupings.rb'
-require 'polynomial.rb'
+require './primes.rb'
+require './groupings.rb'
+require './polynomial.rb'
 #require 'point.rb'
 
 # To solve this one, we make a template of 10 of the digit we are checking
@@ -428,31 +428,69 @@ def problem_122a(max = 200)
 end
 
 def problem_122(max = 200)
-  maps = []
-  done = {}
-  done[1] = 1
-  upto = 2
-  while upto < max
-    # Find a number we don't have a value for
-    while done[upto] do
-      upto += 1
+  # Return an array of [number, steps]
+  doit = lambda do |d,max|
+    ret = d.dup
+    while ret.last[0] < max
+      ret << [ret.last[0]*2,ret.last[1]+1]
     end
-    # Starting at this point, which will be done[upto-1]+1
-    best = {}
-    muls = (done[upto-1]+1)
-    t = upto
-    while t <= max
-      best[t] = muls
-      t += t
-      muls += 1
-    end
-    maps << best
-    done = best.merge(done)
-    puts done.inspect
+    ret
   end
+
+  num_adds = lambda do |a,num|
+    steps = 0
+    d,n = a,num
+#    puts d.inspect
+#    puts num
+    while n > 1
+      d = d.select {|i| i[0] <= n }
+      if steps == 0
+        steps = d.last[1]
+      else
+        steps += 1
+      end
+      n -= d.last[0]
+    end
+    steps += 1 if n == 1
+    steps
+  end
+
+#  seive = Array.new(num) { false }
+#  seive[0] = true
+#  seive[1] = true
+  arrays = []
+#  while i = seive.index(false)
+#    Build up the arrays
+#  end
+  arrays << doit.call([[1,0],[2,1]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[5,3]],max)
+  arrays << doit.call([[1,0],[2,1],[4,2],[5,3]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[5,3],[7,4]],max)
+  arrays << doit.call([[1,0],[2,1],[4,2],[5,3],[7,4]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[4,3],[5,4]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[6,3],[9,4]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[6,3],[8,4],[11,5]],max)
+  arrays << doit.call([[1,0],[2,1],[4,2],[8,3],[12,4]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[5,3],[8,4],[13,5]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[6,3],[12,4],[14,5]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[6,3],[12,4],[15,5]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[6,3],[7,4],[13,5]],max)
+  arrays << doit.call([[1,0],[2,1],[3,2],[5,3],[7,4],[14,5],[21,6]],max)
+
+  total = 0
+  1.upto(max) do |i|
+    ret = i
+    arrays.each do |dd|
+      ret = [ret,num_adds.call(dd,i)].min
+    end
+    puts "#{i} -> #{ret}" #if ret > 10
+    total += ret
+  end
+  total
 end
 
 if __FILE__ == $0
-  p problem_122 #(15)
+  p problem_122(200)
 end
 
