@@ -580,6 +580,28 @@ def problem_23
 end
 
 if __FILE__ == $0
+  p problem_1
+  p problem_2
+  p problem_3
+  p problem_4
+  p problem_5
+  p problem_6
+  p problem_7
+  p problem_8
+  p problem_9
+  p problem_10
+  p problem_11
+  p problem_12
+  p problem_13
+  p problem_14
+  p problem_15
+  p problem_16
+  p problem_17
+  p problem_18
+  p problem_19
+  p problem_20
   p problem_21
+  p problem_22
+  p problem_23
 end
 

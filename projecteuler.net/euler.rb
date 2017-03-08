@@ -491,6 +491,6 @@ def problem_122(max = 200)
 end
 
 if __FILE__ == $0
-  p problem_122(200)
+  p problem_116
 end
 
