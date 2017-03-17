@@ -490,7 +490,26 @@ def problem_122(max = 200)
   total
 end
 
+def problem_123(max = 10**10)
+  n = 0
+  Primes.upto(1000000) do |p|
+    n += 1
+    
+    if true
+      # From problem 120, 1.065s
+      # (p**n +1) % p**2 => n*p+1
+      # (p**n -1) % p**2 => odd, even => n*p-1, 1-np
+      # add together and for odd, we get 2np
+      break if n.odd? && (2*n*p) > max
+    else # Simple, brute force: 68.014s
+      r = ((p-1)**n + (p+1)**n) % (p*p)
+      break if r > max
+    end
+  end
+  n
+end
+
 if __FILE__ == $0
-  p problem_116
+  p problem_123
 end
 
