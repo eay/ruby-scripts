@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes.rb'
-require 'groupings.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
 
 # Brute force recursive - 3m.
 # This is a customised version of Integer#groupings

@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require './primes.rb'
-require './groupings.rb'
-require './polynomial.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
+require_relative 'polynomial.rb'
 #require 'point.rb'
 
 # To solve this one, we make a template of 10 of the digit we are checking

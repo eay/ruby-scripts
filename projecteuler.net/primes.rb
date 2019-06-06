@@ -9,7 +9,9 @@ if RUBY_VERSION < "1.8.7"
   end
 end
 
-require 'rational'
+if RUBY_ENGINE != 'opal'
+  require 'rational'
+end
 
 class Primes
   include Enumerable

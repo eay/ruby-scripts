@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes.rb'
-require 'groupings.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
 
 # The recursive one, that saves intermediate values.
 # We could implement this by working down to both ends then

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes'
+require_relative './primes.rb'
 
 # Problem 1
 # Add all the natural numbers below one thousand that are multiples of 3 or 5

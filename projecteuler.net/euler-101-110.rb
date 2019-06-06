@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes.rb'
-require 'groupings.rb'
-require 'polynomial.rb'
-require 'point.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
+require_relative 'polynomial.rb'
+require_relative 'point.rb'
 
 # Some-one elses solution
 # Lagrange Interpolation

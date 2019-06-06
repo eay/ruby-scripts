@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby1.9
 # Taken from http://projecteuler.net
-require 'primes.rb'
-require 'groupings.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
 
 def problem_50
   primes = []

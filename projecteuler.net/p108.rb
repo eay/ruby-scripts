@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby1.9
 #
-require 'primes.rb'
-require 'groupings.rb'
-require 'polynomial.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
+require_relative 'polynomial.rb'
 
 def solutions(a)
   loop do

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes.rb'
-require 'groupings.rb'
+require_relative 'primes.rb'
+require_relative 'groupings.rb'
 
 class Problem68
   attr_accessor :value

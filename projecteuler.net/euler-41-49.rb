@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # Taken from http://projecteuler.net
-require 'primes'
+require_relative 'primes'
 
 def problem_41
   # hmm... if the sum of the digits is divisable by 3, it can never be prime,
